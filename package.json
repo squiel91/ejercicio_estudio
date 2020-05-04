@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "core-js": "^3.6.4",
+    "katex": "^0.11.1",
     "register-service-worker": "^1.7.1",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-katex": "^0.4.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",

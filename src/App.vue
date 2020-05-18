@@ -1,53 +1,52 @@
 <template>
     <div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-            <div class="container">
-                <span class="navbar-brand" href="#">
-                    <img :src="require('./img/main_logo.png')" style="height:10vh;" alt="main logo">
-                </span>
-
-    <ul class="navbar-nav mr-auto">
-    </ul>
-          <div class="dropdown mr-2">
-        <button class="btn btn-outline-primary dropdown-toggle " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Cargar
-        </button>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-          <span class="dropdown-item" @click="cargarEjemplo(0)">Ejercicio sin variabilidad</span>
-          <span class="dropdown-item" @click="cargarEjemplo(1)">Reacciones en viga apoyada</span>
-          <span class="dropdown-item" @click="cargarEjemplo(2)">Cortante en viga apoyada volada</span>
-          <span class="dropdown-item" @click="cargarEjemplo(3)">Momento en viga apoyada volada</span>
-          <span class="dropdown-item" @click="cargarEjemplo(4)">Integrales indefinidas</span>
-          <div class="dropdown-divider"></div>
-          <span class="dropdown-item" @click="$refs.cargarEjercicio.click()">De tu PC</span>
-          <div class="dropdown-divider"></div>
-          <span class="dropdown-item" @click="reinicializar">Ejercicio Vacio</span>
-        </div>
-        </div>
-        
-      <div class="dropdown">
-        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Descargar
-        </button>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-            <span @click="descargar" class="dropdown-item" href="#">Especificacion (txt)</span>
-            <div class="dropdown-divider"></div>
-            <span @click="descargarEva" class="dropdown-item" href="#">EVA (xml)</span>
-        </div>
-        </div>
+        <nav style="background-color: #f8f9fa">
+            <div class="container p-2 mb-4">
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <img :src="require('./img/main_logo.png')" style="height:10vh;" alt="main logo">
+                    </div>
+                    <div class="col-12 col-sm-6 my-auto py-2">
+                        <div style="display: inline-block" class="dropdown float-right">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Descargar
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                <span @click="descargar" class="dropdown-item" href="#">Especificacion (.txt)</span>
+                                <div class="dropdown-divider"></div>
+                                <span @click="descargarEva" class="dropdown-item" href="#">EVA (.xml)</span>
+                            </div>
+                        </div>
+                        <div style="display: inline-block" class="dropdown float-right">
+                            <button class="btn btn-outline-primary dropdown-toggle mr-2" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Cargar
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                <span class="dropdown-item" @click="cargarEjemplo(0)">Ejercicio sin variabilidad</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(1)">Reacciones viga apoyada</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(2)">Cortante viga apoyada volada</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(3)">Momento viga apoyada volada</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(4)">Integrales indefinidas</span>
+                                <div class="dropdown-divider"></div>
+                                <span class="dropdown-item" @click="$refs.cargarEjercicio.click()">Desde tu PC</span>
+                                <div class="dropdown-divider"></div>
+                                <span class="dropdown-item" @click="reinicializar">Ejercicio Vacio</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-  
-</nav>
+        </nav>
         <div class="container">
         <div class="form-group">
-            <label for="titulo">Titulo</label>
+            <label for="titulo">Título</label>
                 <svg @click="ayudaTitulo = !ayudaTitulo" class="bi bi-question-circle float-right" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/>
                     <path d="M5.25 6.033h1.32c0-.781.458-1.384 1.36-1.384.685 0 1.313.343 1.313 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.007.463h1.307v-.355c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.326 0-2.786.647-2.754 2.533zm1.562 5.516c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
                 </svg>
             <div v-if="ayudaTitulo" @click="ayudaTitulo = false" class="alert alert-primary" role="alert">
-                Título identificativo del ejercicio para conveniencia de los docentes, el estudiante lo verá.<br><br>
-                <strong>Es obligatorio definirlo.</strong>.</div>
+                Título identificativo del ejercicio para conveniencia de los docentes, el estudiante NO lo verá.<br><br>
+                <strong>Es obligatorio definirlo.</strong></div>
             <input 
                 class="form-control form-control-lg" 
                 :class="{'is-invalid': errorTitulo != ''}" 
@@ -61,20 +60,24 @@
         </div>
 
         <div class="form-group">
-            <label for="imagen" @click="imagen='https://www.lacasadeel.net/wp-content/uploads/2019/11/Captura-3.png'">Imágen</label>
+            <label for="imagen">Imagen</label>
             <svg @click="ayudaImagen = !ayudaImagen" class="bi bi-question-circle float-right" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/>
                 <path d="M5.25 6.033h1.32c0-.781.458-1.384 1.36-1.384.685 0 1.313.343 1.313 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.007.463h1.307v-.355c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.326 0-2.786.647-2.754 2.533zm1.562 5.516c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
             </svg>
+            <svg v-if="imagen != ''" @click="imagen = ''" class="bi bi-trash-fill float-right mr-2" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M2.5 1a1 1 0 00-1 1v1a1 1 0 001 1H3v9a2 2 0 002 2h6a2 2 0 002-2V4h.5a1 1 0 001-1V2a1 1 0 00-1-1H10a1 1 0 00-1-1H7a1 1 0 00-1 1H2.5zm3 4a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7a.5.5 0 01.5-.5zM8 5a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7A.5.5 0 018 5zm3 .5a.5.5 0 00-1 0v7a.5.5 0 001 0v-7z" clip-rule="evenodd"/>
+            </svg>
             <div v-if="ayudaImagen" @click="ayudaImagen = false" class="alert alert-primary" role="alert">
-                Imagen opcional que se incluye arriba del texto problema. Dado que es una imágen estática recomendamos nombrar los parámetros por nombre y no un valor que podría variar.
+                Imagen opcional que se incluye arriba del texto problema. Dado que es una imágen estática recomendamos nombrar los parámetros por nombre y no un valor que podría variar.<br><br>
+                <strong>El tamaño máximo es de 500 kb. Acepta cualquier formato de imágen.</strong>
             </div>
             <div v-if="imagen != ''" class="card">
                 <img class="card-img" :src="imagen">
             </div>
             <div v-else class="input-group">
                 <div class="custom-file">
-                    <input type="file" @change="subitImagen" class="custom-file-input" id="inputGroupFile01"
+                    <input type="file" @change="subirImagen" accept="image/x-png,image/gif,image/jpeg,  image/jpg" class="custom-file-input" id="inputGroupFile01"
                     aria-describedby="inputGroupFileAddon01">
                     <label class="custom-file-label" for="inputGroupFile01">{{ mensajeImagen }}</label>
                 </div>
@@ -89,7 +92,7 @@
             <div v-if="ayudaProblema" @click="ayudaProblema = false" class="alert alert-primary" role="alert">
                 Texto principal que especifica el problema.<br><br>
                 Puedes usar una variable antes definida (parámetro o cómputo) antecediendolo por un símbolo "@" (ejemplo: @largo).<br><br>
-                También puedes utilizar LaTeX estándar para definir fórmulas matemáticas (delimitando las con \( y \) para fórmulas en la misma línea o \[ y \] para fórmulas espaciadas centradas).<br><br>
+                También puedes utilizar LaTeX estándar para definir fórmulas matemáticas (delimitandolas con \( y \) para fórmulas en la misma línea o \[ y \] para fórmulas espaciadas centradas).<br><br>
                 <strong>Es obligatorio definirlo.</strong>
             </div>
             <textarea 
@@ -111,7 +114,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="solucion">Solucion</label>
+            <label for="solucion">Solución</label>
             <svg @click="ayudaSolucion = !ayudaSolucion" class="bi bi-question-circle float-right" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/>
                 <path d="M5.25 6.033h1.32c0-.781.458-1.384 1.36-1.384.685 0 1.313.343 1.313 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.007.463h1.307v-.355c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.326 0-2.786.647-2.754 2.533zm1.562 5.516c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
@@ -181,7 +184,7 @@
                 maximo: null,
                 decimales: 2,
                 conjunto: []
-            })" class="btn btn-primary">Agregar Parametro</button>
+            })" class="btn btn-primary">Agregar Parámetro</button>
             <svg @click="ayudaParametros = !ayudaParametros" class="bi bi-question-circle ml-3" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/>
                 <path d="M5.25 6.033h1.32c0-.781.458-1.384 1.36-1.384.685 0 1.313.343 1.313 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.007.463h1.307v-.355c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.326 0-2.786.647-2.754 2.533zm1.562 5.516c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
@@ -199,15 +202,15 @@
                 ref="computos"
                 :key="indice"/>
             <div v-if="ayudaComputos" @click="ayudaComputos = false" class="alert alert-primary" role="alert">
-                Los <strong>cónmputos</strong> permiten introducir cálculos complejos a los ejercicios. El cómputo se instancia en base a la especificación de su fórmula y con la cantidad de decimales especificados.<br><br>
-                Se pueden utilizar numeros, parámetros, cómputos antes definidos, operadores y fórmulas matematicas (la lista exhaustiva se pueden conultar al final de la <a href="https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub">Guía de usuario</a>)
+                Los <strong>cómputos</strong> permiten introducir cálculos complejos a los ejercicios. El cómputo se instancia en base a la especificación de su fórmula y con la cantidad de decimales especificados.<br><br>
+                Se pueden utilizar numeros, parámetros, cómputos antes definidos, operadores y fórmulas matematicas (la lista exhaustiva se pueden conultar al final de la <a target="_blank" href="https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub">Guía de usuario</a>)
                 Para los parámetros y cómputos no se debe anteponer "@" como si en Problema, Solucion y Distractor.
             </div>
             <button @click="computos.push({
                 nombre: '',
                 formula: '',
                 decimales: 2
-            })" class="btn btn-primary">Agregar Computo</button>
+            })" class="btn btn-primary">Agregar Cómputo</button>
             <svg @click="ayudaComputos = !ayudaComputos" class="bi bi-question-circle ml-3" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clip-rule="evenodd"/>
                 <path d="M5.25 6.033h1.32c0-.781.458-1.384 1.36-1.384.685 0 1.313.343 1.313 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.007.463h1.307v-.355c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.326 0-2.786.647-2.754 2.533zm1.562 5.516c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
@@ -218,18 +221,18 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 col-lg-6 pb-5">
-                    <h4>Ejercicio Estudio</h4>
+                    <h4>Ejercicio Estudio v 0.4</h4>
                     <p>Este software surge como una colaboración entre la Facultad de Ingeniería y la FADU para generar ejericicos parametrizados.</p>
                     <a href="http://udelar.edu.uy/portal/">Universidad de la Repúbica</a> 2020 ©
                 </div>
                 <div class="col-4 col-lg-2 pb-5">
                     <h5>Resursos</h5>
                     <a target="_blank" href="https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub">Guia de usuarios</a><br>
-                    <a target="_blank" href="paper/">Artículo científico</a><br>
+                    <a target="_blank" href="exercise_standard_specification_which_promotes_collaboration_and_reusing.pdf">Artículo científico</a><br>
                 </div>
                 <div class="col-4 col-lg-2 pb-5">
                     <h5>Repositorios</h5>
-                    <a target="_blank" href="http://udelar.edu.uy/portal/">Github</a><br>
+                    <a target="_blank" href="https://github.com/squiel91/ejercicio_estudio">Github</a><br>
                     <a target="_blank" href="https://drive.google.com/drive/folders/1Zyl54X1ouMuxMe5PKITVViMtSKmVo1Sy?usp=sharing">Ejercicios</a><br>
                 </div>
                 <div class="col-4 col-lg-2 pb-5">
@@ -245,24 +248,18 @@
 </template>
 
 <script>
+import Distractor from './components/Distractor.vue'
+import Parametro from './components/Parametro.vue'
+import Computo from './components/Computo.vue'
+import axios from 'axios'
 
 const CANTIDAD_INSTANCIAS = 10
 const SIMBOLO_VAR = "@"
-
-if (!Array.prototype.last){
-    Array.prototype.last = function(){
-        return this[this.length - 1]
-    }
-}
 
 function round(value, precision) {
     var multiplier = Math.pow(10, precision || 0);
     return Math.round(value * multiplier) / multiplier;
 }
-
-import Distractor from './components/Distractor.vue'
-import Parametro from './components/Parametro.vue'
-import Computo from './components/Computo.vue'
 
 export default {
     name: 'App',
@@ -307,30 +304,38 @@ export default {
         }
     },
     methods: {
-        subitImagen(event) {
+        subirImagen(event) {
             const files = event.target.files;
             const formData = new FormData();
 
-            var thisVue = this
-            var nombreImagen
-
             this.mensajeImagen = 'Subiendo imagen...'
 
-            for (let i = 0; i < files.length; i++) {
-                let file = files[i];
+            var nombreImagen
+            
+            if (files.length > 0) {
+                let file = files[0];
+                formData.append('file', file)
                 nombreImagen = Math.random().toString().substring(2) + '.' + file.name.split('.')[file.name.split('.').length - 1]
-                console.log(files[0])
-                files[0].fileName = nombreImagen
-                formData.append('files[]', file)
+                formData.append('fileName', nombreImagen)
             }
 
-            fetch('https://tiantian.io/upload.php', {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                if (response.status == 200)
+            var thisVue = this
+
+            axios.post('https://tiantian.io/upload.php', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(resultado => {
+                if (resultado.data.error) {
+                    thisVue.mensajeImagen = resultado.data.message
+                } else {
                     thisVue.imagen = 'https://tiantian.io/uploads/' + nombreImagen
-                else thisVue.mensajeImagen = 'Ups! Hubo un error al subirla' 
+                    thisVue.mensajeImagen = 'Elige una imágen'
+                }
+            })
+            .catch(() => {
+                thisVue.mensajeImagen = 'Ups! Hubo un error al subirla'
             });
         },
         reinicializar() {
@@ -422,8 +427,33 @@ export default {
                 ejercicio += `
                 <dataset_definitions>
                 `
-                this.parametros.forEach(parametro => {
-                    ejercicio += `
+
+                if (this.parametros.length == 0) {
+                ejercicio += `
+            <dataset_definition>
+                <status><text>private</text></status>
+                <name><text>dummy</text></name>
+                <type>calculatedsimple</type>
+                <distribution><text>uniform</text></distribution>
+                <minimum><text>1</text></minimum>
+                <maximum><text>10</text></maximum>
+                <decimals><text>1</text></decimals>
+                <itemcount>2</itemcount>
+                <dataset_items>
+                    <dataset_item>
+                        <number>1</number>
+                        <value>2</value>
+                    </dataset_item>
+                    <dataset_item>
+                        <number>1</number>
+                        <value>3</value>
+                    </dataset_item>
+                </dataset_items>
+                <number_of_items>2</number_of_items>
+            </dataset_definition>`
+                } else {
+                    this.parametros.forEach(parametro => {
+                        ejercicio += `
             <dataset_definition>
                 <status><text>private</text></status>
                 <name><text>${parametro.nombre}</text></name>
@@ -432,7 +462,7 @@ export default {
                 <minimum><text>${parametro.esIntervalo? parametro.minimo : Math.min(parametro.conjunto)}</text></minimum>
                 <maximum><text>${parametro.esIntervalo? parametro.maximo : Math.max(parametro.conjunto)}</text></maximum>
                 <decimals><text>${parametro.decimales}</text></decimals>
-                <itemcount>${CANTIDAD_INSTANCIAS}</itemcount>
+                <itemcount>${parametro.esIntervalo? CANTIDAD_INSTANCIAS : parametro.conjunto.length}</itemcount>
             <dataset_items>`
                     if (parametro.esIntervalo) {
                         for (let i = 0; i < CANTIDAD_INSTANCIAS; i++) {
@@ -456,7 +486,8 @@ export default {
                     </dataset_items>
                     <number_of_items>${parametro.esIntervalo? CANTIDAD_INSTANCIAS : parametro.conjunto.length}</number_of_items>
                 </dataset_definition>`
-                })
+                    })
+                }
 
                 ejercicio += `
             </dataset_definitions>
@@ -467,35 +498,36 @@ export default {
         },
         descargar() {
             if (this.chequear()) {
-                var text = 'Título: ' + this.titulo + '\n';
-                text += "Problema: " + this.problema + "\n";
-                text += "Solución: " + this.solucion + "\n";
+                var text = 'Título: ' + this.titulo + '\n'
+                text += "Problema: " + this.problema + "\n"
+                if (this.imagen != '') text += "Imagen: " + this.imagen + "\n"
+                text += "Solución: " + this.solucion + "\n"
 
-                text += '\n\n'
+                text += '\n'
 
                 this.distractores.forEach((distractor) => {
-                    text += "Distractor: " + distractor + '\n';
+                    text += "Distractor: " + distractor + '\n'
                 })
 
-                text += '\n\n'
+                text += '\n'
 
                 this.parametros.forEach((parametro) => {
-                    text += "Parametro: " + parametro.nombre + '\n';
+                    text += "Parametro: " + parametro.nombre + '\n'
                     if (parametro.esIntervalo) {
-                        text += "Minimo: " + parametro.minimo + '\n';
-                        text += "Maximo: " + parametro.maximo + '\n';
-                        text += "Decimales: " + parametro.decimales + '\n\n';
+                        text += "Minimo: " + parametro.minimo + '\n'
+                        text += "Maximo: " + parametro.maximo + '\n'
+                        text += "Decimales: " + parametro.decimales + '\n\n'
                     } else {
-                        text += "Conjunto: " + parametro.conjunto + '\n\n';
+                        text += "Conjunto: " + parametro.conjunto + '\n\n'
                     }
                 })
 
                 text += '\n'
 
                 this.computos.forEach((computo) => {
-                    text += "Cómputo: " + computo.nombre + '\n';
-                    text += "Formula: " + computo.formula + "\n";
-                    text += "Decimales: " + computo.decimales + "\n\n";	
+                    text += "Cómputo: " + computo.nombre + '\n'
+                    text += "Formula: " + computo.formula + "\n"
+                    text += "Decimales: " + computo.decimales + "\n\n"	
                 })
                 this.createFile(this.titulo + '.txt', text)
             }
@@ -512,10 +544,10 @@ export default {
         cargarEjemplo(i) {
             var ejercicios = [
                 'Titulo: Tipos de tiángulos\nProblema: Cuál es el tipo de triángulo que tiene todos sus tres lados iguales?\nSolución: Equilátero\nDistractor: Escaleno\nDistractor:Isóceles\n',
-                'Titulo: Cálculo de reacciones en una viga apoyada\nProblema: Para la viga apoyada en \\(A\\) y en \\(B\\) de @L m de longitud que semuestra en la figura, calcular el valor de \\(R_A\\), la reacción en el apoyo \\(A\\).\nSolución: @correcta\nDistractor: @esRB\nDistractor: @noQ\nDistractor: @resultantedeqenmitadtramo\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\n\n',
-                'Titulo: Cálculo de cortante en viga apoyada volada\nProblema: En la viga de la figura los valores de los parámetros son \\(a = @a\\) \\(\\,m\\) y \\(q = @q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\) la expresión del cortantees \\[V(x)=mx+n.\\] Hallar dicha expresión y dar el valor de \\(n\\).\nSolución: @correcta\nDistractor: @noRA\nDistractor: @puntualesporx\nDistractor: @sinpuntuales\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\nComputo: correcta\nFormula: q*(0.5+29*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: -2*q\nDecimales: 1\n\nComputo: puntualesporx\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: sinpuntuales\nFormula: 0\nDecimales: 0\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: i\nFormula: a\nDecimales: 2\n\nComputo: s\nFormula: 3*a\nDecimales: 2\n',
-                'Titulo: Cálculo de momento en viga apoyada volada\nProblema: En la viga de la figura los valores de los parámetros son \\(a=@a\\) \\(\\,m\\) y \\(q=@q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\)  la expresión del momento flector es \\[M(x)=mx^2+nx+p.\\] Hallar dicha expresión ydar el valor de \\(m+n\\).\nSolución: @correcta\nDistractor: @noRA\nDistractor: @distribuida2qporxporx2\nDistractor: @distribuidasporxporx2\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\nComputo: correcta\nFormula: q*(0.5+29*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: -2*q\nDecimales: 1\n\nComputo: puntualesporx\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: sinpuntuales\nFormula: 0\nDecimales: 0\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: correcta\nFormula: q*(-0.5+53*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: 3*q*(a-1)\nDecimales: 1\n\nComputo: distribuida2qporxporx2\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: i\nFormula: 3*a\nDecimales: 1\n\nComputo: s\nFormula: 5*a\nDecimales: 1\n\nComputo: distribuidasporxporx2\nFormula: q*(-0.5+5*a/8)\nDecimales: 2\n',
-                'Titulo: Integrales indefinidas\nProblema: La función \\[F(x)= \\int_{-1}^{x}{(|1-x|-x)dx}\\] admite para \\(x \\leq @menorigual\\) una expresión \\(F(x)=ax^2+bx + c\\), en forma de un polinomio de grado menor o igual a 2.\nDeterminar la suma a + b + c de los coeficientes de ese polinomio.\nSolución: @correcto\nDistractor: @distractor_a \nDistractor: @distractor_b \nDistractor: Ningúna de las demás es correcta\nParámetro: limiteinferior\nMáximo: -1\nMinimo: -10\nDecimales:2\nParámetro: constanteintegracion\nMáximo: 20\nMinimo: 1\nDecimales:2\nParámetro: menorigual\nMáximo: 9\nMinimo: 3\nComputo: correcto\nFórmula: limiteinferior*constanteintegracion-menorigual\nDecimales:1\nComputo: distractor_a\nFórmula: limiteinferior*constanteintegracion\nDecimales: 1\nComputo: distractor_b\nFórmula: limiteinferior*menorigual\nDecimales: 1'
+                'Titulo: Cálculo de reacciones en una viga apoyada\nImagen: https://tiantian.io/uploads/viga_pregunta_1.jpg\nProblema: Para la viga apoyada en \\(A\\) y en \\(B\\) de @L m de longitud que semuestra en la figura, calcular el valor de \\(R_A\\), la reacción en el apoyo \\(A\\).\nSolución: @correcta\nDistractor: @esRB\nDistractor: @noQ\nDistractor: @resultantedeqenmitadtramo\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\n\n',
+                'Titulo: Cálculo de cortante en viga apoyada volada\nImagen: https://tiantian.io/uploads/viga_pregunta_2_3.jpg\nProblema: En la viga de la figura los valores de los parámetros son \\(a = @a\\) \\(\\,m\\) y \\(q = @q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\) la expresión del cortantees \\[V(x)=mx+n.\\] Hallar dicha expresión y dar el valor de \\(n\\).\nSolución: @correcta\nDistractor: @noRA\nDistractor: @puntualesporx\nDistractor: @sinpuntuales\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\nComputo: correcta\nFormula: q*(0.5+29*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: -2*q\nDecimales: 1\n\nComputo: puntualesporx\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: sinpuntuales\nFormula: 0\nDecimales: 0\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: i\nFormula: a\nDecimales: 2\n\nComputo: s\nFormula: 3*a\nDecimales: 2\n',
+                'Titulo: Cálculo de momento en viga apoyada volada\nImagen: https://tiantian.io/uploads/viga_pregunta_2_3.jpg\nProblema: En la viga de la figura los valores de los parámetros son \\(a=@a\\) \\(\\,m\\) y \\(q=@q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\)  la expresión del momento flector es \\[M(x)=mx^2+nx+p.\\] Hallar dicha expresión ydar el valor de \\(m+n\\).\nSolución: @correcta\nDistractor: @noRA\nDistractor: @distribuida2qporxporx2\nDistractor: @distribuidasporxporx2\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\nComputo: correcta\nFormula: q*(0.5+29*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: -2*q\nDecimales: 1\n\nComputo: puntualesporx\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: sinpuntuales\nFormula: 0\nDecimales: 0\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: correcta\nFormula: q*(-0.5+53*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: 3*q*(a-1)\nDecimales: 1\n\nComputo: distribuida2qporxporx2\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: i\nFormula: 3*a\nDecimales: 1\n\nComputo: s\nFormula: 5*a\nDecimales: 1\n\nComputo: distribuidasporxporx2\nFormula: q*(-0.5+5*a/8)\nDecimales: 2\n',
+                'Titulo: Integrales indefinidas\nImagen: https://tiantian.io/uploads/optimizacion.png\nProblema: La función \\[F(x)= \\int_{-1}^{x}{(|1-x|-x)dx}\\] admite para \\(x \\leq @menorigual\\) una expresión \\(F(x)=ax^2+bx + c\\), en forma de un polinomio de grado menor o igual a 2.\nDeterminar la suma a + b + c de los coeficientes de ese polinomio.\nSolución: @correcto\nDistractor: @distractor_a \nDistractor: @distractor_b \nDistractor: Ningúna de las demás es correcta\nParámetro: limiteinferior\nMáximo: -1\nMinimo: -10\nDecimales:2\nParámetro: constanteintegracion\nMáximo: 20\nMinimo: 1\nDecimales:2\nParámetro: menorigual\nMáximo: 9\nMinimo: 3\nComputo: correcto\nFórmula: limiteinferior*constanteintegracion-menorigual\nDecimales:1\nComputo: distractor_a\nFórmula: limiteinferior*constanteintegracion\nDecimales: 1\nComputo: distractor_b\nFórmula: limiteinferior*menorigual\nDecimales: 1'
             ]
             var parseado = this.parse(ejercicios[i].split("\n"));
             this.mostrar_ejercicio(parseado);
@@ -526,7 +558,7 @@ export default {
         traducirSintaxis(texto) {
            // parametros
             this.parametros.forEach(parametro => {
-                let regexParametro = new RegExp(SIMBOLO_VAR + parametro.nombre + '(?=[\\W]|$)', 'g');
+                let regexParametro = new RegExp(SIMBOLO_VAR + parametro.nombre + '(?!\\w])', 'g');
                 texto = texto.replace(regexParametro, '{' + parametro.nombre + '}')
             })
 
@@ -535,13 +567,13 @@ export default {
                 let formula_parcial = computo.formula
                 
                 this.parametros.forEach(paramentro => {
-                    let regexComputo = new RegExp('(?:(?<=[\\W])|(?<=^))' + paramentro.nombre + '(?=[\\W]|$)', 'g');
-                    formula_parcial = formula_parcial.replace(regexComputo, '{' + paramentro.nombre + '}', formula_parcial)
+                    let regexComputo = new RegExp('(\\W|^)' + paramentro.nombre + '(?!\\w)', 'g');
+                    formula_parcial = formula_parcial.replace(regexComputo, '$1{' + paramentro.nombre + '}', formula_parcial)
                 })
                 while (formula_parcial.includes('{{'))
                     formula_parcial = formula_parcial.replace('{{', '{').replace('}}', '}')
-                let formula_eva = '{=' + formula_parcial + '}' // convert_eva_operators
-                let regexComputoFinal = new RegExp(SIMBOLO_VAR + computo.nombre + '(?=[\\W]|$)', 'g');
+                let formula_eva = `{= round(${formula_parcial}, ${computo.decimales})}` // convert_eva_operators
+                let regexComputoFinal = new RegExp(SIMBOLO_VAR + computo.nombre + '(?!\\w])', 'g');
                 texto = texto.replace(regexComputoFinal, formula_eva)
             })
 
@@ -552,6 +584,12 @@ export default {
 
             this.parseado = ejercicio[0]
             this.titulo = ejercicio.titulo[0];
+            if (ejercicio.imagen) {
+                console.log(ejercicio.imagen)
+                this.imagen = ejercicio.imagen[0]
+            } else {
+                this.imagen = ''
+            }
             this.problema = ejercicio.problema[0];
             this.solucion = ejercicio.solucion[0];
             
@@ -650,6 +688,7 @@ export default {
         parse(text_array) {
             var keys = {
                 'titulo': {},
+                'imagen': {},
                 'comentario': {},
                 'problema': {},
                 'solucion': {},
@@ -666,7 +705,7 @@ export default {
             var splited = line.split(':');
             if (splited.length > 1 && keys.indexOf(this.normalized(splited[0])) >= 0) {
                 key = this.normalized(splited[0])
-                value = splited[1].trim();
+                value = splited.splice(1).join(':').trim();
             } else {
                 value = line;
             }

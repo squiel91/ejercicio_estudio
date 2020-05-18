@@ -2,7 +2,7 @@
     <div>
         <div class="card mb-3">
             <div class="card-header">
-                <div class="pb-3">Parametro
+                <div class="pb-3">Parámetro
                     <button @click="$emit('eliminar');" class="btn btn-outline-danger btn-sm float-right">Eliminar</button>
                 </div>
                 <ul class="nav nav-tabs card-header-tabs">
@@ -17,7 +17,7 @@
             <div v-if="value.esIntervalo" class="card-body">
                 <div v-if="value.esIntervalo" class="row">
                     <div class="form-group col-12 col-lg-2">
-                        <label for="minimo-computo">Minimo</label>
+                        <label for="minimo-computo">Mínimo</label>
                         <div class="input-group">
                         <input 
                         :class="{'is-invalid': errorMinimo != ''}" 
@@ -26,10 +26,10 @@
                         <div class="input-group-append">
                             <span class="input-group-text" id="basic-addon1">&lt;</span>
                         </div>
+                        </div>
                         <div class="invalid-feedback">
                                 {{ errorMinimo }}
                             </div>
-                        </div>
                     </div>
                     <div class="form-group col-12 col-lg-5">
                         <label for="formula">Nombre</label>
@@ -41,13 +41,13 @@
                         :class="{'is-invalid': errorNombre != ''}" 
                         @keyup="errorMaximo = ''"
                         type="text" class="form-control" key="nombre" id="formula" v-model="value.nombre">
+                        </div>
                         <div class="invalid-feedback">
                             {{ errorNombre }}
                         </div>
-                        </div>
                     </div>
                     <div class="form-group col-12 col-lg-2">
-                        <label for="maximo-computo">Maximo</label>
+                        <label for="maximo-computo">Máximo</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1">&lt;</span>
@@ -60,9 +60,9 @@
                                 id="maximo-computo" 
                                 v-model.number="value.maximo"
                             >
-                            <div class="invalid-feedback">
-                                {{ errorMaximo }}
-                            </div>
+                        </div>
+                        <div class="invalid-feedback">
+                            {{ errorMaximo }}
                         </div>
                     </div>
                     <div class="form-group col-12 col-lg-3">
@@ -92,9 +92,9 @@
                         :class="{'is-invalid': errorNombre != ''}" 
                         @keyup="errorNombre = ''"
                         type="text" class="form-control" id="nombre-computo" key="nombre" v-model="value.nombre">
+                        </div>
                         <div class="invalid-feedback">
                             {{ errorNombre }}
-                        </div>
                         </div>
                     </div>
                     <div class="form-group col-12 col-lg-6">

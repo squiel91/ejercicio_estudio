@@ -2,7 +2,7 @@
     <div>
         <div class="card mb-3">
             <div class="card-header">
-                Computo
+                Cómputo
                 <button @click="$emit('eliminar');" class="btn btn-outline-danger btn-sm float-right">Eliminar</button>
             </div>
             <div class="card-body">
@@ -19,17 +19,17 @@
                         class="form-control" 
                         id="nombre-computo" 
                         v-model="value.nombre">
+                        </div>
                         <div class="invalid-feedback">
                             {{ errorNombre }}
                         </div>
-                        </div>
                     </div>
                     <div class="form-group col-12 col-lg-6">
-                        <label for="formula">Formula</label>
+                        <label for="formula">Fórmula</label>
                         <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">=</span>
-                        </div>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">=</span>
+                            </div>
                             <input 
                             type="text" 
                             :class="{'is-invalid': errorFormula != ''}" 
@@ -37,9 +37,9 @@
                             class="form-control" 
                             id="formula" 
                             v-model="value.formula">
-                            <div class="invalid-feedback">
-                                {{ errorFormula }}
-                            </div>
+                        </div>
+                        <div class="invalid-feedback">
+                            {{ errorFormula }}
                         </div>
                     </div>
                     <div class="form-group col-12 col-lg-3">

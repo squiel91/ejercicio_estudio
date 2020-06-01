@@ -1,7 +1,7 @@
 <template>
     <div>
         <nav style="background-color: #f8f9fa">
-            <div class="container p-2 mb-4">
+            <div class="container p-2">
                 <div class="row">
                     <div class="col-12 col-sm-6">
                         <img :src="require('./img/main_logo.png')" style="height:10vh;" alt="main logo">
@@ -38,6 +38,12 @@
             </div>
         </nav>
         <div class="container">
+            <div v-if="showTutorial" class="embed-responsive embed-responsive-21by9">
+            <iframe src="https://www.youtube.com/embed/videoseries?list=PL3C0FXQkj7vQyFg2k9WsTaBED5oIfVFOB" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="my-2" style="text-align: center;">
+            <button @click="showTutorial = ! showTutorial" class="btn btn-outline-secondary">{{ showTutorial? 'Hide' : 'Show' }} Tutorial</button>
+            </div>                
         <div class="form-group">
             <label for="titulo">Título</label>
                 <svg @click="ayudaTitulo = !ayudaTitulo" class="bi bi-question-circle float-right" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
@@ -221,8 +227,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 col-lg-6 pb-5">
-                    <h4>Ejercicio Estudio v 0.4</h4>
+                    <h4>Ejercicio Estudio v 0.5</h4>
                     <p>Este software surge como una colaboración entre la Facultad de Ingeniería y la FADU para generar ejericicos parametrizados.</p>
+                    <p>Dedicado a <a href="https://www.youtube.com/watch?v=E8WFA_B_Ci4&fbclid=IwAR3PHGQ4qZYrji1UCK-VXQVhE8zVH5aEZzN6-DHoihrtUR1QUfANFWsWQXk">Omar Gil</a></p>
                     <a href="http://udelar.edu.uy/portal/">Universidad de la Repúbica</a> 2020 ©
                 </div>
                 <div class="col-4 col-lg-2 pb-5">
@@ -253,7 +260,7 @@ import Parametro from './components/Parametro.vue'
 import Computo from './components/Computo.vue'
 import axios from 'axios'
 
-const CANTIDAD_INSTANCIAS = 10
+const CANTIDAD_INSTANCIAS = 100
 const SIMBOLO_VAR = "@"
 
 function round(value, precision) {
@@ -266,7 +273,7 @@ export default {
     data() {
         return {
             editando: true,
-            
+            showTutorial: true,
             titulo: '',
             ayudaTitulo: false,
             imagen: '',
@@ -454,41 +461,30 @@ export default {
                 } else {
                     this.parametros.forEach(parametro => {
                         ejercicio += `
-            <dataset_definition>
-                <status><text>private</text></status>
-                <name><text>${parametro.nombre}</text></name>
-                <type>calculatedsimple</type>
-                <distribution><text>uniform</text></distribution>
-                <minimum><text>${parametro.esIntervalo? parametro.minimo : Math.min(parametro.conjunto)}</text></minimum>
-                <maximum><text>${parametro.esIntervalo? parametro.maximo : Math.max(parametro.conjunto)}</text></maximum>
-                <decimals><text>${parametro.decimales}</text></decimals>
-                <itemcount>${parametro.esIntervalo? CANTIDAD_INSTANCIAS : parametro.conjunto.length}</itemcount>
-            <dataset_items>`
-                    if (parametro.esIntervalo) {
+                <dataset_definition>
+                    <status><text>private</text></status>
+                    <name><text>${parametro.nombre}</text></name>
+                    <type>calculatedsimple</type>
+                    <distribution><text>uniform</text></distribution>
+                    <minimum><text>${parametro.esIntervalo? parametro.minimo : Math.min(parametro.conjunto)}</text></minimum>
+                    <maximum><text>${parametro.esIntervalo? parametro.maximo : Math.max(parametro.conjunto)}</text></maximum>
+                    <decimals><text>${parametro.decimales}</text></decimals>
+                    <itemcount>${CANTIDAD_INSTANCIAS}</itemcount>
+                    <dataset_items>`
                         for (let i = 0; i < CANTIDAD_INSTANCIAS; i++) {
                             ejercicio += `
-                            <dataset_item>
-                                <number>${i+1}</number>
-                                <value>${round(Math.random() * (parametro.maximo - parametro.minimo) + parametro.minimo, parametro.decimales)}</value>
-                            </dataset_item>`
+                        <dataset_item>
+                            <number>${i+1}</number>
+                            <value>${parametro.esIntervalo? round(Math.random() * (parametro.maximo - parametro.minimo) + parametro.minimo, parametro.decimales) : parametro.conjunto[Math.floor(Math.random() * parametro.conjunto.length)]}</value>
+                        </dataset_item>`
                         }
-                    } else {
-                        for (let i = 0; i < parametro.conjunto.length; i++) {
-                            ejercicio += `
-                            <dataset_item>
-                                <number>${i+1}</number>
-                                <value>${parametro.conjunto[i]}</value>
-                            </dataset_item>`
-                        }
-                    }
 
-                    ejercicio += `
+                        ejercicio += `
                     </dataset_items>
-                    <number_of_items>${parametro.esIntervalo? CANTIDAD_INSTANCIAS : parametro.conjunto.length}</number_of_items>
+                    <number_of_items>${CANTIDAD_INSTANCIAS}</number_of_items>
                 </dataset_definition>`
                     })
                 }
-
                 ejercicio += `
             </dataset_definitions>
         </question>
@@ -546,7 +542,7 @@ export default {
                 'Titulo: Tipos de tiángulos\nProblema: Cuál es el tipo de triángulo que tiene todos sus tres lados iguales?\nSolución: Equilátero\nDistractor: Escaleno\nDistractor:Isóceles\n',
                 'Titulo: Cálculo de reacciones en una viga apoyada\nImagen: https://tiantian.io/uploads/viga_pregunta_1.jpg\nProblema: Para la viga apoyada en \\(A\\) y en \\(B\\) de @L m de longitud que semuestra en la figura, calcular el valor de \\(R_A\\), la reacción en el apoyo \\(A\\).\nSolución: @correcta\nDistractor: @esRB\nDistractor: @noQ\nDistractor: @resultantedeqenmitadtramo\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\n\n',
                 'Titulo: Cálculo de cortante en viga apoyada volada\nImagen: https://tiantian.io/uploads/viga_pregunta_2_3.jpg\nProblema: En la viga de la figura los valores de los parámetros son \\(a = @a\\) \\(\\,m\\) y \\(q = @q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\) la expresión del cortantees \\[V(x)=mx+n.\\] Hallar dicha expresión y dar el valor de \\(n\\).\nSolución: @correcta\nDistractor: @noRA\nDistractor: @puntualesporx\nDistractor: @sinpuntuales\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\nComputo: correcta\nFormula: q*(0.5+29*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: -2*q\nDecimales: 1\n\nComputo: puntualesporx\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: sinpuntuales\nFormula: 0\nDecimales: 0\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: i\nFormula: a\nDecimales: 2\n\nComputo: s\nFormula: 3*a\nDecimales: 2\n',
-                'Titulo: Cálculo de momento en viga apoyada volada\nImagen: https://tiantian.io/uploads/viga_pregunta_2_3.jpg\nProblema: En la viga de la figura los valores de los parámetros son \\(a=@a\\) \\(\\,m\\) y \\(q=@q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\)  la expresión del momento flector es \\[M(x)=mx^2+nx+p.\\] Hallar dicha expresión ydar el valor de \\(m+n\\).\nSolución: @correcta\nDistractor: @noRA\nDistractor: @distribuida2qporxporx2\nDistractor: @distribuidasporxporx2\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\nComputo: correcta\nFormula: q*(0.5+29*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: -2*q\nDecimales: 1\n\nComputo: puntualesporx\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: sinpuntuales\nFormula: 0\nDecimales: 0\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: correcta\nFormula: q*(-0.5+53*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: 3*q*(a-1)\nDecimales: 1\n\nComputo: distribuida2qporxporx2\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: i\nFormula: 3*a\nDecimales: 1\n\nComputo: s\nFormula: 5*a\nDecimales: 1\n\nComputo: distribuidasporxporx2\nFormula: q*(-0.5+5*a/8)\nDecimales: 2\n',
+                'Titulo: Cálculo de momento en viga apoyada volada\nImagen: https://tiantian.io/uploads/viga_pregunta_2_3.jpg\nProblema: En la viga de la figura los valores de los parámetros son \\(a=@a\\) \\(\\,m\\) y \\(q=@q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\)  la expresión del momento flector es \\[M(x)=mx^2+nx+p.\\] Hallar dicha expresión y dar el valor de \\(m+n\\).\nSolución: @correcta\nDistractor: @noRA\nDistractor: @distribuida2qporxporx2\nDistractor: @distribuidasporxporx2\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\nComputo: correcta\nFormula: q*(0.5+29*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: -2*q\nDecimales: 1\n\nComputo: puntualesporx\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: sinpuntuales\nFormula: 0\nDecimales: 0\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: correcta\nFormula: q*(-0.5+53*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: 3*q*(a-1)\nDecimales: 1\n\nComputo: distribuida2qporxporx2\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: i\nFormula: 3*a\nDecimales: 1\n\nComputo: s\nFormula: 5*a\nDecimales: 1\n\nComputo: distribuidasporxporx2\nFormula: q*(-0.5+5*a/8)\nDecimales: 2\n',
                 'Titulo: Integrales indefinidas\nImagen: https://tiantian.io/uploads/optimizacion.png\nProblema: La función \\[F(x)= \\int_{-1}^{x}{(|1-x|-x)dx}\\] admite para \\(x \\leq @menorigual\\) una expresión \\(F(x)=ax^2+bx + c\\), en forma de un polinomio de grado menor o igual a 2.\nDeterminar la suma a + b + c de los coeficientes de ese polinomio.\nSolución: @correcto\nDistractor: @distractor_a \nDistractor: @distractor_b \nDistractor: Ningúna de las demás es correcta\nParámetro: limiteinferior\nMáximo: -1\nMinimo: -10\nDecimales:2\nParámetro: constanteintegracion\nMáximo: 20\nMinimo: 1\nDecimales:2\nParámetro: menorigual\nMáximo: 9\nMinimo: 3\nComputo: correcto\nFórmula: limiteinferior*constanteintegracion-menorigual\nDecimales:1\nComputo: distractor_a\nFórmula: limiteinferior*constanteintegracion\nDecimales: 1\nComputo: distractor_b\nFórmula: limiteinferior*menorigual\nDecimales: 1'
             ]
             var parseado = this.parse(ejercicios[i].split("\n"));
@@ -558,8 +554,8 @@ export default {
         traducirSintaxis(texto) {
            // parametros
             this.parametros.forEach(parametro => {
-                let regexParametro = new RegExp(SIMBOLO_VAR + parametro.nombre + '(?!\\w])', 'g');
-                texto = texto.replace(regexParametro, '{' + parametro.nombre + '}')
+                let regexParametro = new RegExp(SIMBOLO_VAR + parametro.nombre + '(\\W|$)', 'g');
+                texto = texto.replace(regexParametro, '{' + parametro.nombre + '}$1')
             })
 
             // formulas
@@ -567,8 +563,8 @@ export default {
                 let formula_parcial = computo.formula
                 
                 this.parametros.forEach(paramentro => {
-                    let regexComputo = new RegExp('(\\W|^)' + paramentro.nombre + '(?!\\w)', 'g');
-                    formula_parcial = formula_parcial.replace(regexComputo, '$1{' + paramentro.nombre + '}', formula_parcial)
+                    let regexComputo = new RegExp('(\\W|^)' + paramentro.nombre + '(\\W|$)', 'g');
+                    formula_parcial = formula_parcial.replace(regexComputo, '$1{' + paramentro.nombre + '}$2')
                 })
                 while (formula_parcial.includes('{{'))
                     formula_parcial = formula_parcial.replace('{{', '{').replace('}}', '}')

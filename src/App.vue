@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div >
         <nav style="background-color: #f8f9fa">
             <div class="container p-2">
                 <div class="row">
@@ -38,11 +38,11 @@
             </div>
         </nav>
         <div class="container">
-            <div v-if="showTutorial" class="embed-responsive embed-responsive-21by9">
+            <div v-if="mostrarTutorial" class="embed-responsive embed-responsive-21by9">
             <iframe src="https://www.youtube.com/embed/videoseries?list=PL3C0FXQkj7vQyFg2k9WsTaBED5oIfVFOB" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
             <div class="my-2" style="text-align: center;">
-            <button @click="showTutorial = ! showTutorial" class="btn btn-outline-secondary">{{ showTutorial? 'Hide' : 'Show' }} Tutorial</button>
+            <button @click="mostrarTutorial = ! mostrarTutorial" class="btn btn-outline-secondary btn-sm">{{ mostrarTutorial? 'Ocultar' : 'Mostrar' }} Tutorial</button>
             </div>                
         <div class="form-group">
             <label for="titulo">Título</label>
@@ -75,7 +75,7 @@
                 <path fill-rule="evenodd" d="M2.5 1a1 1 0 00-1 1v1a1 1 0 001 1H3v9a2 2 0 002 2h6a2 2 0 002-2V4h.5a1 1 0 001-1V2a1 1 0 00-1-1H10a1 1 0 00-1-1H7a1 1 0 00-1 1H2.5zm3 4a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7a.5.5 0 01.5-.5zM8 5a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7A.5.5 0 018 5zm3 .5a.5.5 0 00-1 0v7a.5.5 0 001 0v-7z" clip-rule="evenodd"/>
             </svg>
             <div v-if="ayudaImagen" @click="ayudaImagen = false" class="alert alert-primary" role="alert">
-                Imagen opcional que se incluye arriba del texto problema. Dado que es una imágen estática recomendamos nombrar los parámetros por nombre y no un valor que podría variar.<br><br>
+                Imagen opcional que se muestra arriba del texto problema. Dado que es una imágen estática recomendamos nombrar los parámetros por nombre y no un valor que podría variar.<br><br>
                 <strong>El tamaño máximo es de 500 kb. Acepta cualquier formato de imágen.</strong>
             </div>
             <div v-if="imagen != ''" class="card">
@@ -97,7 +97,7 @@
             </svg>
             <div v-if="ayudaProblema" @click="ayudaProblema = false" class="alert alert-primary" role="alert">
                 Texto principal que especifica el problema.<br><br>
-                Puedes usar una variable antes definida (parámetro o cómputo) antecediendolo por un símbolo "@" (ejemplo: @largo).<br><br>
+                Se puede usar una variable antes definida (parámetro o cómputo) antecediendolo por un símbolo "@" (ejemplo: @largo).<br><br>
                 También puedes utilizar LaTeX estándar para definir fórmulas matemáticas (delimitandolas con \( y \) para fórmulas en la misma línea o \[ y \] para fórmulas espaciadas centradas).<br><br>
                 <strong>Es obligatorio definirlo.</strong>
             </div>
@@ -128,7 +128,7 @@
             <div v-if="ayudaSolucion" @click="ayudaSolucion = false" class="alert alert-primary" role="alert">
                 Texto que especifica la solución correcta al problema antes planteado. Debe ser la opción seleccionada por los alumnos para que se les tome el ejercicio como correcto.<br><br>
                 Al igual que en la sección Problema puedes usar una variable antes definida (parámetro o cómputo) antecediendolo por un símbolo "@" (ejemplo: @ancho).<br><br>
-                Por limitaciones actuales del EVA en las opciones de ejercicios parametrizados no se admite el uso de LaTeX<br><br>
+                Por limitaciones actuales del EVA en las opciones de ejercicios parametrizados no se admite el uso de LaTeX (Solución ni Distractor)<br><br>
                 <strong>Es obligatorio definirla.</strong>
             </div>
             <textarea 
@@ -152,7 +152,7 @@
             <div v-if="ayudaDistractores" @click="ayudaDistractores = false" class="alert alert-primary" role="alert">
                 Los <strong>distractores</strong> son las opciones que "distraen" a los alumnos. Aquellos que elijan un distractor como respuesta se les tomará el ejercicio como incorrecto.<br><br>
                 Al igual que en la sección Problema y Solución puedes usar una variable antes definida (parámetro o cómputo) antecediendolo por un símbolo "@" (ejemplo: @areaTriangulo).<br><br>
-                Por limitaciones actuales del EVA en las opciones de ejercicios parametrizados no se admite el uso de LaTeX<br><br>
+                Por limitaciones actuales del EVA en las opciones de ejercicios parametrizados no se admite el uso de LaTeX (Solución ni Distractor)<br><br>
                 <strong>Ten en cuenta que para que el ejercicio sea válido debes definir al menos un distractor.</strong>    
             </div>
             <button @click="distractores.push('')" class="btn btn-primary">Agregar Distractor</button>
@@ -209,7 +209,7 @@
                 :key="indice"/>
             <div v-if="ayudaComputos" @click="ayudaComputos = false" class="alert alert-primary" role="alert">
                 Los <strong>cómputos</strong> permiten introducir cálculos complejos a los ejercicios. El cómputo se instancia en base a la especificación de su fórmula y con la cantidad de decimales especificados.<br><br>
-                Se pueden utilizar numeros, parámetros, cómputos antes definidos, operadores y fórmulas matematicas (la lista exhaustiva se pueden conultar al final de la <a target="_blank" href="https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub">Guía de usuario</a>)
+                Se pueden utilizar numeros, parámetros, cómputos antes definidos, operadores y fórmulas matematicas (la lista exhaustiva se pueden conultar al final de la <a target="_blank" href="https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub">Guía de usuario</a>).
                 Para los parámetros y cómputos no se debe anteponer "@" como si en Problema, Solucion y Distractor.
             </div>
             <button @click="computos.push({
@@ -227,14 +227,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 col-lg-6 pb-5">
-                    <h4>Ejercicio Estudio v 0.5</h4>
+                    <h4>Ejercicio Estudio v 0.6</h4>
                     <p>Este software surge como una colaboración entre la Facultad de Ingeniería y la FADU para generar ejericicos parametrizados.</p>
-                    <p>Dedicado a <a href="https://www.youtube.com/watch?v=E8WFA_B_Ci4&fbclid=IwAR3PHGQ4qZYrji1UCK-VXQVhE8zVH5aEZzN6-DHoihrtUR1QUfANFWsWQXk">Omar Gil</a></p>
+                    <p>Dedicado a <a href="https://www.youtube.com/watch?v=E8WFA_B_Ci4&fbclid=IwAR3PHGQ4qZYrji1UCK-VXQVhE8zVH5aEZzN6-DHoihrtUR1QUfANFWsWQXk">Omar Gil</a>, precursor de este proyecto.</p>
                     <a href="http://udelar.edu.uy/portal/">Universidad de la Repúbica</a> 2020 ©
                 </div>
                 <div class="col-4 col-lg-2 pb-5">
                     <h5>Resursos</h5>
-                    <a target="_blank" href="https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub">Guia de usuarios</a><br>
+                    <a target="_blank" href="https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub">Guia de usuario</a><br>
                     <a target="_blank" href="exercise_standard_specification_which_promotes_collaboration_and_reusing.pdf">Artículo científico</a><br>
                 </div>
                 <div class="col-4 col-lg-2 pb-5">
@@ -262,6 +262,7 @@ import axios from 'axios'
 
 const CANTIDAD_INSTANCIAS = 100
 const SIMBOLO_VAR = "@"
+const NAMESPACING = "EE_PAR_"
 
 function round(value, precision) {
     var multiplier = Math.pow(10, precision || 0);
@@ -273,7 +274,7 @@ export default {
     data() {
         return {
             editando: true,
-            showTutorial: true,
+            mostrarTutorial: true,
             titulo: '',
             ayudaTitulo: false,
             imagen: '',
@@ -463,7 +464,7 @@ export default {
                         ejercicio += `
                 <dataset_definition>
                     <status><text>private</text></status>
-                    <name><text>${parametro.nombre}</text></name>
+                    <name><text>${NAMESPACING + parametro.nombre}</text></name>
                     <type>calculatedsimple</type>
                     <distribution><text>uniform</text></distribution>
                     <minimum><text>${parametro.esIntervalo? parametro.minimo : Math.min(parametro.conjunto)}</text></minimum>
@@ -555,7 +556,7 @@ export default {
            // parametros
             this.parametros.forEach(parametro => {
                 let regexParametro = new RegExp(SIMBOLO_VAR + parametro.nombre + '(\\W|$)', 'g');
-                texto = texto.replace(regexParametro, '{' + parametro.nombre + '}$1')
+                texto = texto.replace(regexParametro, '{' + NAMESPACING + parametro.nombre + '}$1')
             })
 
             // formulas
@@ -563,14 +564,14 @@ export default {
                 let formula_parcial = computo.formula
                 
                 this.parametros.forEach(paramentro => {
-                    let regexComputo = new RegExp('(\\W|^)' + paramentro.nombre + '(\\W|$)', 'g');
-                    formula_parcial = formula_parcial.replace(regexComputo, '$1{' + paramentro.nombre + '}$2')
+                    let regexComputo = new RegExp('(\\W|^)' + paramentro.nombre + '(?=\\W|$)', 'g');
+                    formula_parcial = formula_parcial.replace(regexComputo, '$1{' + NAMESPACING + paramentro.nombre + '}')
                 })
                 while (formula_parcial.includes('{{'))
                     formula_parcial = formula_parcial.replace('{{', '{').replace('}}', '}')
                 let formula_eva = `{= round(${formula_parcial}, ${computo.decimales})}` // convert_eva_operators
-                let regexComputoFinal = new RegExp(SIMBOLO_VAR + computo.nombre + '(?!\\w])', 'g');
-                texto = texto.replace(regexComputoFinal, formula_eva)
+                let regexComputoFinal = new RegExp(SIMBOLO_VAR + computo.nombre + '(\\W|$)', 'g');
+                texto = texto.replace(regexComputoFinal, formula_eva + '$1')
             })
 
             return texto

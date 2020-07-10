@@ -38,7 +38,7 @@
                             id="formula" 
                             v-model="value.formula">
                         </div>
-                        <div class="invalid-feedback">
+                        <div :style="{display: 'block'}" class="invalid-feedback">
                             {{ errorFormula }}
                         </div>
                     </div>
@@ -68,6 +68,9 @@ export default {
         }
     },
     methods: {
+        setearErrorParseo(error) {
+            this.errorFormula = error
+        },
         nombreValido() {
             if (this.value.nombre != '') this.errorNombre = ''
         },

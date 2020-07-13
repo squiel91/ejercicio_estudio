@@ -27,7 +27,7 @@
                             <span class="input-group-text" id="basic-addon1">&lt;</span>
                         </div>
                         </div>
-                        <div class="invalid-feedback">
+                        <div :style="{display: 'block'}" class="invalid-feedback">
                                 {{ errorMinimo }}
                             </div>
                     </div>
@@ -40,9 +40,9 @@
                         <input 
                         :class="{'is-invalid': errorNombre != ''}" 
                         @keyup="errorMaximo = ''"
-                        type="text" class="form-control" key="nombre" id="formula" v-model="value.nombre">
+                        type="text" class="form-control" key="nombre" id="formula" v-model.trim="value.nombre">
                         </div>
-                        <div class="invalid-feedback">
+                        <div :style="{display: 'block'}" class="invalid-feedback">
                             {{ errorNombre }}
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                                 v-model.number="value.maximo"
                             >
                         </div>
-                        <div class="invalid-feedback">
+                        <div :style="{display: 'block'}" class="invalid-feedback">
                             {{ errorMaximo }}
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                         @keyup="errorNombre = ''"
                         type="text" class="form-control" id="nombre-computo" key="nombre" v-model="value.nombre">
                         </div>
-                        <div class="invalid-feedback">
+                        <div :style="{display: 'block'}" class="invalid-feedback">
                             {{ errorNombre }}
                         </div>
                     </div>
@@ -120,6 +120,8 @@
 </template>
 
 <script>
+var NOMBRES_RESERVADOS = ['break', 'case', 'catch', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'finally', 'for', 'function', 'if', 'in', 'instanceof', 'new', 'return', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void', 'while', 'with', 'class', 'const', 'enum', 'export', 'extends', 'import', 'super', 'implements', 'interface', 'let', 'package', 'private', 'protected', 'public', 'static', 'yield', 'null', 'true', 'false']
+
 export default {
     props: ['value'],
     data() {
@@ -140,6 +142,16 @@ export default {
             if (this.value.nombre == '') {
                 this.errorNombre = 'Se debe asignar un nombre al parametro.'
                 todoOk = false
+            } else {
+                if (!this.value.nombre.match(/^[a-zA-Z][_a-zA-Z0-9]*$/)) {
+                    todoOk = false
+                    this.errorNombre = 'Los nombres solo pueden estar formado por caracteres alfanumericos y barra baja (\'_\') y empezar con una letra.'
+                } else {
+                    if (NOMBRES_RESERVADOS.includes(this.value.nombre)) {
+                        todoOk = false
+                        this.errorNombre = 'El nombre elegido forma parte de los nombres reservados de Moodle. Elige otro!.'
+                    }   
+                }
             }
             if (this.value.maximo == '') {
                 this.errorMaximo = 'Se debe asignar una cota superior.'

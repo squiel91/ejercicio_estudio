@@ -2,6 +2,22 @@
     <div >
         <nav style="background-color: #f8f9fa">
             <div class="container p-2">
+                <div>
+                    <b-sidebar right id="sidebar-1" title="Vista previa" shadow>
+                        <div class="px-3 py-2">
+                            <b-img class="mb-3" v-if="imagen != ''" :src="imagen" fluid thumbnail></b-img>
+                            <div class="mb-4" ref="problemaEjemplo" v-katex:auto></div>
+                            <p><input type="radio" checked=true disabled> {{ solucion_preview }} <b-badge>Solución</b-badge></strong></p>
+                            <p v-for="(distractor, indice) in distractores_preview" :key="indice"><input type="radio" disabled> {{ distractor }}</p>
+                            <button class="btn btn-primary" @click="preview">
+                                <svg width="1.4em" height="1.4em" viewBox="0 0 16 16" class="bi bi-arrow-counterclockwise" fill="white" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M12.83 6.706a5 5 0 0 0-7.103-3.16.5.5 0 1 1-.454-.892A6 6 0 1 1 2.545 5.5a.5.5 0 1 1 .91.417 5 5 0 1 0 9.375.789z"/>
+                                    <path fill-rule="evenodd" d="M7.854.146a.5.5 0 0 0-.708 0l-2.5 2.5a.5.5 0 0 0 0 .708l2.5 2.5a.5.5 0 1 0 .708-.708L5.707 3 7.854.854a.5.5 0 0 0 0-.708z"/>
+                                </svg>
+                                Update</button>
+                        </div>
+                    </b-sidebar>
+                </div>
                 <div class="row">
                     <div class="col-12 col-sm-6">
                         <router-link to="/">
@@ -12,7 +28,7 @@
                         <img :src="require('./img/main_logo.png')" style="height:10vh;" alt="main logo">
                     </div>
                     <div class="col-12 col-sm-6 my-auto py-2">
-                        <div style="display: inline-block" class="dropdown float-right">
+                        <div style="display: inline-block" class="dropdown float-right mr-2">
                             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Descargar
                             </button>
@@ -45,14 +61,21 @@
         <div class="container">
             <div v-if="contieneErrores" @click="contieneErrores = 0" class="alert alert-danger" role="alert">
                 <strong>La especificación del ejercicio contiene {{ contieneErrores }} {{ contieneErrores == 1? "error" : "errores" }}!</strong><br>
+                <ul class="mt-3" v-if="mensajeErrores.length > 0">
+                    <li v-for="(error, index) in mensajeErrores" :key="index">{{ error }}</li>
+                </ul>
                 Corrige todos los errores para poder proceder a descargar. Vas a ver los campos con error marcados en rojo y con un detalle del error.
+
             </div>
-            <div v-if="mostrarTutorial" class="embed-responsive embed-responsive-21by9">
-            <iframe src="https://www.youtube.com/embed/videoseries?list=PL3C0FXQkj7vQyFg2k9WsTaBED5oIfVFOB" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <div class="my-2" style="text-align: center;">
-            <button @click="mostrarTutorial = ! mostrarTutorial" class="btn btn-outline-secondary btn-sm">{{ mostrarTutorial? 'Ocultar' : 'Mostrar' }} Tutorial</button>
-            </div>                
+            <div  style="text-align: center;" class="mt-2">
+            <b-button size="sm" variant="light" pill v-b-toggle.sidebar-1>
+                <svg width="0.8em" height="0.8em" viewBox="0 0 16 16" class="bi bi-search" fill="black" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+                    <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+                </svg>
+                Vista Previa
+            </b-button>
+            </div>           
         <div class="form-group">
             <label for="titulo">Título</label>
                 <svg @click="ayudaTitulo = !ayudaTitulo" class="bi bi-question-circle float-right" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
@@ -157,7 +180,9 @@
             <div v-if="distractores.length == 0" class="alert alert-danger" role="alert">
                 Se necesita al menos un distractor.
             </div>
-            <distractor v-for="(distractor, indice) in distractores" @eliminar="distractores.splice(indice, 1)" ref="distractores" :key="indice" v-model="distractores[indice]"/>
+            <draggable v-model="distractores" group="distractor" @start="drag=true" @end="drag=false">
+                <distractor v-for="(distractor, indice) in distractores" @eliminar="distractores.splice(indice, 1)" ref="distractores" :key="indice" v-model="distractores[indice]"/>
+            </draggable>
             <div v-if="ayudaDistractores" @click="ayudaDistractores = false" class="alert alert-primary" role="alert">
                 Los <strong>distractores</strong> son las opciones que "distraen" a los alumnos. Aquellos que elijan un distractor como respuesta se les tomará el ejercicio como incorrecto.<br><br>
                 Al igual que en la sección Problema y Solución puedes usar una variable antes definida (parámetro o cómputo) antecediendolo por un símbolo "@" (ejemplo: @areaTriangulo).<br><br>
@@ -175,13 +200,15 @@
             <div v-if="parametros.length == 0 && !ayudaParametros" class="alert alert-primary" role="alert">
                 Define parametros para darle variabilidad al ejercicio!
             </div>
-            <parametro 
-                v-for="(parametro, indice) in parametros" 
-                @eliminar="parametros.splice(indice, 1)"
-                v-model="parametros[indice]"
-                ref="parametros"
-                :key="indice"
-            />
+            <draggable v-model="parametros" group="parametro" @start="drag=true" @end="drag=false">
+                <parametro 
+                    v-for="(parametro, indice) in parametros" 
+                    @eliminar="parametros.splice(indice, 1)"
+                    v-model="parametros[indice]"
+                    ref="parametros"
+                    :key="indice"
+                />
+            </draggable>
             <div v-if="ayudaParametros" @click="ayudaParametros = false" class="alert alert-primary" role="alert">
                 Son los <strong>parámetros</strong> variables que agregan variabilidad al ejercicio.<br><br>
                 Este parámetro lo puedes usar en las secciones Problemas, Solución y Distractores como un número cualquiera antecediendo el nombre con el símbolo "@'" Al momento de mostrarse al estudiante, el parámetro se instanciará de forma aleatoria de acuerdo a la especificación.<br><br>
@@ -210,12 +237,14 @@
             <div v-if="computos.length == 0  && !ayudaComputos" class="alert alert-primary" role="alert">
                 Define computos para agregar complejidad al ejercicio!
             </div>
-            <computo 
-                v-for="(computo, indice) in computos" 
-                v-model="computos[indice]"
-                @eliminar="computos.splice(indice, 1)"
-                ref="computos"
-                :key="indice"/>
+            <draggable v-model="computos" group="computo" @start="drag=true" @end="drag=false">
+                <computo 
+                    v-for="(computo, indice) in computos" 
+                    v-model="computos[indice]"
+                    @eliminar="computos.splice(indice, 1)"
+                    ref="computos"
+                    :key="indice"/>
+            </draggable>
             <div v-if="ayudaComputos" @click="ayudaComputos = false" class="alert alert-primary" role="alert">
                 Los <strong>cómputos</strong> permiten introducir cálculos complejos a los ejercicios. El cómputo se instancia en base a la especificación de su fórmula y con la cantidad de decimales especificados.<br><br>
                 Se pueden utilizar numeros, parámetros, cómputos antes definidos, operadores y fórmulas matematicas (la lista exhaustiva se pueden conultar al final de la <a target="_blank" href="https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub">Guía de usuario</a>).
@@ -232,11 +261,11 @@
             </svg>
         </section>
     </div>
-    <footer style="background-color:#f8f9fa" class="pt-4 mt-5">
+    <footer style="background-color:#f8f9fa" class= "pt-4 mt-5">
         <div class="container">
             <div class="row">
                 <div class="col-12 col-lg-6 pb-5">
-                    <h4>Ejercicio Estudio v 0.7</h4>
+                    <h4>Ejercicio Estudio v 0.8</h4>
                     <p>Este software surge como una colaboración entre la Facultad de Ingeniería y la FADU para generar ejericicos parametrizados.</p>
                     <p>Dedicado a <a href="https://www.youtube.com/watch?v=E8WFA_B_Ci4&fbclid=IwAR3PHGQ4qZYrji1UCK-VXQVhE8zVH5aEZzN6-DHoihrtUR1QUfANFWsWQXk">Omar Gil</a>, precursor de este proyecto.</p>
                     <a href="http://udelar.edu.uy/portal/">Universidad de la Repúbica</a> 2020 ©
@@ -278,6 +307,15 @@ function round(value, precision) {
     return Math.round(value * multiplier) / multiplier;
 }
 
+function parsearVariables(campos) {
+    var variable_re = /@[\w]+/g
+    var variables_usadas = []
+    campos.forEach((campo) => variables_usadas = variables_usadas.concat(campo.match(variable_re)))
+    return new Set(variables_usadas.map((el) => el.substr(1))) // les saco el # inicial y las transformo en un set
+}
+
+import draggable from 'vuedraggable'
+
 export default {
     name: 'App',
     data() {
@@ -300,17 +338,22 @@ export default {
             ayudaComputos: false,
             parseado: {},
 
+            solucion_preview: '',
+            distractores_preview: [],
+
             mensajeImagen: 'Elige una imágen',
             errorTitulo: '',
             errorProblema: '',
             errorSolucion: '',
-            contieneErrores: 0
+            contieneErrores: 0,
+            mensajeErrores: []
         }
     },
     created() {
         this.agregarFunciones()
     },
     components: {
+        draggable,
         distractor: Distractor,
         parametro: Parametro,
         computo: Computo
@@ -373,9 +416,15 @@ export default {
             this.parametros = []
             this.computos = []
             this.contieneErrores = 0
+            this.mensajeErrores = []
+
+            this.solucion_preview = ''
+            this.distractores_preview = []
+
         },
         chequear() {
-            var cantidadErrores = 0;
+            var cantidadErrores = 0
+            this.mensajeErrores = []
 
             // basic_errors
             if (this.titulo == '') {
@@ -401,49 +450,84 @@ export default {
             for (var j in this.computos)
                 if (!this.$refs.computos[j].esValido()) cantidadErrores += 1
 
-            this.parametros.forEach(parametro => {
-                var value
-                if (parametro.esIntervalo) {
-                    value = round((parametro.maximo - parametro.minimo)/2 + parametro.minimo, parametro.decimales) 
-                } else {
-                    value = parametro.conjunto[0]
-                }
-                eval("window." + parametro.nombre + " = " + value)
-            })
-
-            var indice = -1
-            this.computos.forEach(computo => {
-                indice += 1
-                try {
-                    var value = round(eval(computo.formula), computo.decimales)
-                    if (isNaN(value)) throw Error('La fórmula contiene un error. Definiste bien las funciones con sus respectivos parametros? Perdon por no poder ser mas especifico!')
-                    console.log(computo.nombre + " = " + value)
-                    eval("window." + computo.nombre + " = " + value)
-                } catch(err) {
-                    // aaa is not defined
-                    // Unexpected token ')'
-                    // Invalid or unexpected token
-                    let noDefinido = /([^ ]+) is not defined/
-                    let tokenInesperadoDetalle = /Unexpected token '([^']+)'/
-                    let tokenInesperado = /Invalid or unexpected token/
-                    var mensajeError = err.message
-                    let resultado = err.message.match(noDefinido)
-                    if (resultado) {
-                        mensajeError = "La variable '" + resultado[1] + "' no está definida. Recuerda que debes definir el parámetro o el cómputo antes de usarlo."
+            if (cantidadErrores == 0) {
+                this.parametros.forEach(parametro => {
+                    var value
+                    if (parametro.esIntervalo) {
+                        value = round((parametro.maximo - parametro.minimo)/2 + parametro.minimo, parametro.decimales) 
                     } else {
-                        let resultado = err.message.match(tokenInesperadoDetalle)
+                        value = parametro.conjunto[0]
+                    }
+                    eval("window." + parametro.nombre + " = " + value)
+                })
+
+                var indice = -1
+                this.computos.forEach(computo => {
+                    indice += 1
+                    try {
+                        var value = round(eval(computo.formula), computo.decimales)
+                        if (isNaN(value)) throw Error('La fórmula contiene un error. Definiste bien las funciones con sus respectivos parametros? Perdon por no poder ser mas especifico!')
+                        console.log(computo.nombre + " = " + value)
+                        eval("window." + computo.nombre + " = " + value)
+                    } catch(err) {
+                        // aaa is not defined
+                        // Unexpected token ')'
+                        // Invalid or unexpected token
+                        let noDefinido = /([^ ]+) is not defined/
+                        let tokenInesperadoDetalle = /Unexpected token '([^']+)'/
+                        let tokenInesperado = /Invalid or unexpected token/
+                        var mensajeError = err.message
+                        let resultado = err.message.match(noDefinido)
                         if (resultado) {
-                            mensajeError = "Estas seguro que el símbolo '" + resultado[1] + "' esta bien colocado?"
+                            mensajeError = "La variable '" + resultado[1] + "' no está definida. Recuerda que debes definir el parámetro o el cómputo antes de usarlo."
                         } else {
-                            if (tokenInesperado == err.message) {
-                                mensajeError = "Hay un simbolo inesperado! Resuerda que en la formula no debes anteponer el @ a las variables. Solo se antepone en la sección Problema, Solucion y Distractores."
+                            let resultado = err.message.match(tokenInesperadoDetalle)
+                            if (resultado) {
+                                mensajeError = "Estas seguro que el símbolo '" + resultado[1] + "' esta bien colocado?"
+                            } else {
+                                if (tokenInesperado == err.message) {
+                                    mensajeError = "Hay un simbolo inesperado! Resuerda que en la formula no debes anteponer el @ a las variables. Solo se antepone en la sección Problema, Solucion y Distractores."
+                                }
                             }
                         }
+                        this.$refs.computos[indice].setearErrorParseo(mensajeError)
+                        cantidadErrores += 1
                     }
-                    this.$refs.computos[indice].setearErrorParseo(mensajeError)
-                    cantidadErrores += 1
-                }
-            })
+                })
+
+                // TODO: Todas las variables definidas son usadas
+                var ya_usadas = parsearVariables([this.problema, this.solucion, ...this.distractores])
+                var tienen_que_aparecer = new Set()
+                
+                this.parametros.map((par) => {
+                    if (!ya_usadas.has(par.nombre)) tienen_que_aparecer.add(par.nombre)
+                })
+
+                this.computos.map((comp) => {
+                    tienen_que_aparecer.forEach((nombre_var) => {
+                        if (comp.formula.includes(nombre_var)) tienen_que_aparecer.delete(nombre_var)
+                    })
+                    if (!ya_usadas.has(comp.nombre)) tienen_que_aparecer.add(comp.nombre)
+                })
+
+                cantidadErrores += tienen_que_aparecer.size
+                tienen_que_aparecer.forEach((noUtilizada) => {
+                    this.mensajeErrores.push("La variable (parámetro o cómputo) '" + noUtilizada + "' se ha definido pero no lo has utilizado.")
+                })
+
+                // TODO: Todas las variables usadas estan definidas
+                var variables_usadas = parsearVariables([this.problema, this.solucion, ...this.distractores])
+                var variables_definidas = this.parametros.map((par) => par.nombre).concat(this.computos.map((comp) => comp.nombre))
+
+                variables_definidas.forEach((el) => { // sustraigo las variables definidas, quedan las no definidas
+                    variables_usadas.delete(el)
+                })
+
+                cantidadErrores += variables_usadas.size
+                variables_usadas.forEach((noDefinida) => {
+                    this.mensajeErrores.push("La variable (parámetro o cómputo) '" + noDefinida + "' la has usado pero no la has definido!")
+                })
+            }
 
             return cantidadErrores
         },
@@ -523,6 +607,48 @@ export default {
                 } else {
                     return parseFloat(tmp2.toFixed(-p))
                 }
+            }
+        },
+        preview() {
+            this.contieneErrores = this.chequear()
+            if (this.contieneErrores == 0) {
+                this.parametros.forEach(parametro => {
+                    var valor_parametro
+                    if (parametro.esIntervalo)
+                        valor_parametro = valor_parametro = round(Math.random() * (parametro.maximo - parametro.minimo) + parametro.minimo, parametro.decimales) 
+                    else
+                        valor_parametro = parametro.conjunto[Math.floor(Math.random() * parametro.conjunto.length)]
+                    eval("window." + parametro.nombre + " = " + valor_parametro)
+                })
+
+                this.computos.forEach(computo => {
+                    var valor_computo = round(eval(computo.formula), computo.decimales)
+                    eval("window." + computo.nombre + " = " + valor_computo)
+                        
+                })
+                var problema_preview = this.problema
+                var solucion_preview = this.solucion
+                var distractores_preview = []
+                this.distractores.forEach((distractor) => distractores_preview.push(distractor))
+
+                this.parametros.forEach(parametro => {
+                    let regexParametro = new RegExp(SIMBOLO_VAR + parametro.nombre + '(\\W|$)', 'g');
+                    problema_preview = problema_preview.replace(regexParametro, eval(parametro.nombre) + '$1')
+                    solucion_preview = solucion_preview.replace(regexParametro, eval(parametro.nombre) + '$1')
+                    distractores_preview = distractores_preview.map( (distractor) => distractor.replace(regexParametro, eval(parametro.nombre) + '$1'))
+                
+                })
+                this.computos.forEach(computo => {
+                    let regexComputo = new RegExp(SIMBOLO_VAR + computo.nombre + '(\\W|$)', 'g');
+                    problema_preview = problema_preview.replace(regexComputo, eval(computo.nombre) + '$1')
+                    solucion_preview = solucion_preview.replace(regexComputo, eval(computo.nombre) + '$1')
+                    distractores_preview = distractores_preview.map( (distractor) => distractor.replace(regexComputo, eval(computo.nombre) + '$1'))
+                })
+                this.$refs.problemaEjemplo.innerText = problema_preview
+                this.solucion_preview = solucion_preview    
+                this.distractores_preview = distractores_preview    
+
+                this.$forceUpdate();
             }
         },
         descargarEva() {

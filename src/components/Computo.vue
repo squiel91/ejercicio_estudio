@@ -18,9 +18,9 @@
                         @keyup="nombreValido"
                         class="form-control" 
                         id="nombre-computo" 
-                        v-model="value.nombre">
+                        v-model.trim="value.nombre">
                         </div>
-                        <div class="invalid-feedback">
+                        <div :style="{display: 'block'}" class="invalid-feedback">
                             {{ errorNombre }}
                         </div>
                     </div>
@@ -59,6 +59,9 @@
 </template>
 
 <script>
+
+var NOMBRES_RESERVADOS = ['break', 'case', 'catch', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'finally', 'for', 'function', 'if', 'in', 'instanceof', 'new', 'return', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void', 'while', 'with', 'class', 'const', 'enum', 'export', 'extends', 'import', 'super', 'implements', 'interface', 'let', 'package', 'private', 'protected', 'public', 'static', 'yield', 'null', 'true', 'false']
+
 export default {
     props: ['value'],
     data() {
@@ -82,6 +85,16 @@ export default {
             if (this.value.nombre == '') {
                 todoOk = false
                 this.errorNombre = 'Se debe asignar un nombre al computo.'
+            } else {
+                if (!this.value.nombre.match(/^[a-zA-Z][_a-zA-Z0-9]*$/)) {
+                    todoOk = false
+                    this.errorNombre = 'Los nombres solo pueden estar formado por caracteres alfanumericos y barra baja (\'_\') y empezar con una letra.'
+                } else {
+                    if (NOMBRES_RESERVADOS.includes(this.value.nombre)) {
+                        todoOk = false
+                        this.errorNombre = 'El nombre elegido forma parte de los nombres reservados de Moodle. Elige otro!.'
+                    }   
+                }
             }
             if (this.value.formula == '') {
                 todoOk = false

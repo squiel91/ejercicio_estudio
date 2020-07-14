@@ -1,25 +1,9 @@
 <template>
-    <div >
+    <div v-cloak @drop.prevent="addFile" @dragover.prevent @dragenter.prevent="dragEnter" @dragleave.prevent="dragLeave">
         <nav style="background-color: #f8f9fa">
             <div class="container p-2">
-                <div>
-                    <b-sidebar right id="sidebar-1" title="Vista previa" shadow>
-                        <div class="px-3 py-2">
-                            <b-img class="mb-3" v-if="imagen != ''" :src="imagen" fluid thumbnail></b-img>
-                            <div class="mb-4" ref="problemaEjemplo" v-katex:auto></div>
-                            <p><input type="radio" checked=true disabled> {{ solucion_preview }} <b-badge>Solución</b-badge></strong></p>
-                            <p v-for="(distractor, indice) in distractores_preview" :key="indice"><input type="radio" disabled> {{ distractor }}</p>
-                            <button class="btn btn-primary" @click="preview">
-                                <svg width="1.4em" height="1.4em" viewBox="0 0 16 16" class="bi bi-arrow-counterclockwise" fill="white" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" d="M12.83 6.706a5 5 0 0 0-7.103-3.16.5.5 0 1 1-.454-.892A6 6 0 1 1 2.545 5.5a.5.5 0 1 1 .91.417 5 5 0 1 0 9.375.789z"/>
-                                    <path fill-rule="evenodd" d="M7.854.146a.5.5 0 0 0-.708 0l-2.5 2.5a.5.5 0 0 0 0 .708l2.5 2.5a.5.5 0 1 0 .708-.708L5.707 3 7.854.854a.5.5 0 0 0 0-.708z"/>
-                                </svg>
-                                Update</button>
-                        </div>
-                    </b-sidebar>
-                </div>
                 <div class="row">
-                    <div class="col-12 col-sm-6">
+                    <div class="col-12 col-md-6">
                         <router-link to="/">
                             <svg class="bi bi-chevron-left" width="2em" height="2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
@@ -27,7 +11,7 @@
                         </router-link>
                         <img :src="require('./img/main_logo.png')" style="height:10vh;" alt="main logo">
                     </div>
-                    <div class="col-12 col-sm-6 my-auto py-2">
+                    <div class="col-12 col-md-6 my-auto py-2">
                         <div style="display: inline-block" class="dropdown float-right mr-2">
                             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Descargar
@@ -58,13 +42,42 @@
                 </div>
             </div>
         </nav>
+        <div class="drop-sign" v-if="dragCount != 0">
+            <svg width="4em" height="4em" viewBox="0 0 16 16" class="bi bi-download" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M.5 8a.5.5 0 0 1 .5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5a.5.5 0 0 1 1 0V12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8.5A.5.5 0 0 1 .5 8z"/>
+                <path fill-rule="evenodd" d="M5 7.5a.5.5 0 0 1 .707 0L8 9.793 10.293 7.5a.5.5 0 1 1 .707.707l-2.646 2.647a.5.5 0 0 1-.708 0L5 8.207A.5.5 0 0 1 5 7.5z"/>
+                <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0v-8A.5.5 0 0 1 8 1z"/>
+            </svg>
+            <p>Suelta el archivo para cargarlo</p>
+        </div>
         <div class="container">
+            <b-sidebar right id="sidebar-1" title="Vista previa" shadow>
+                <div class="px-3 py-2">
+                    <div v-show="sinErrores">
+                        <b-img class="mb-3" v-if="imagen != ''" :src="imagen" fluid thumbnail></b-img>
+                        <div class="mb-4" ref="problemaEjemplo" v-katex:auto></div>
+                        <p><input type="radio" checked=true disabled> {{ solucion_preview }} <b-badge>Solución</b-badge></p>
+                        <p v-for="(distractor, indice) in distractores_preview" :key="indice"><input type="radio" disabled> {{ distractor }}</p>
+                    </div>
+                    <div v-show="!sinErrores">
+                        <img class="card-img pl-5 pr-5 pt-5 pb-3" :src="require('./img/error_preview.png')">
+                        <p><strong>Es necesario actualizar y que la especificación no contenga errores.</strong></p>
+                    </div>
+                    <button class="btn btn-primary" @click="preview">
+                        <svg width="1.4em" height="1.4em" viewBox="0 0 16 16" class="bi bi-arrow-counterclockwise" fill="white" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M12.83 6.706a5 5 0 0 0-7.103-3.16.5.5 0 1 1-.454-.892A6 6 0 1 1 2.545 5.5a.5.5 0 1 1 .91.417 5 5 0 1 0 9.375.789z"/>
+                            <path fill-rule="evenodd" d="M7.854.146a.5.5 0 0 0-.708 0l-2.5 2.5a.5.5 0 0 0 0 .708l2.5 2.5a.5.5 0 1 0 .708-.708L5.707 3 7.854.854a.5.5 0 0 0 0-.708z"/>
+                        </svg>
+                        Actualizar
+                    </button>
+                </div>
+            </b-sidebar>
             <div v-if="contieneErrores" @click="contieneErrores = 0" class="alert alert-danger" role="alert">
                 <strong>La especificación del ejercicio contiene {{ contieneErrores }} {{ contieneErrores == 1? "error" : "errores" }}!</strong><br>
                 <ul class="mt-3" v-if="mensajeErrores.length > 0">
                     <li v-for="(error, index) in mensajeErrores" :key="index">{{ error }}</li>
                 </ul>
-                Corrige todos los errores para poder proceder a descargar. Vas a ver los campos con error marcados en rojo y con un detalle del error.
+                Corrige todos los errores para poder proceder a descargar. Vas a ver los campos con error aquí o marcados en rojo en el campo respectivo.
 
             </div>
             <div  style="text-align: center;" class="mt-2">
@@ -180,9 +193,7 @@
             <div v-if="distractores.length == 0" class="alert alert-danger" role="alert">
                 Se necesita al menos un distractor.
             </div>
-            <draggable v-model="distractores" group="distractor" @start="drag=true" @end="drag=false">
-                <distractor v-for="(distractor, indice) in distractores" @eliminar="distractores.splice(indice, 1)" ref="distractores" :key="indice" v-model="distractores[indice]"/>
-            </draggable>
+            <distractor v-for="(distractor, indice) in distractores" @eliminar="distractores.splice(indice, 1)" ref="distractores" :key="indice" v-model="distractores[indice]"/>
             <div v-if="ayudaDistractores" @click="ayudaDistractores = false" class="alert alert-primary" role="alert">
                 Los <strong>distractores</strong> son las opciones que "distraen" a los alumnos. Aquellos que elijan un distractor como respuesta se les tomará el ejercicio como incorrecto.<br><br>
                 Al igual que en la sección Problema y Solución puedes usar una variable antes definida (parámetro o cómputo) antecediendolo por un símbolo "@" (ejemplo: @areaTriangulo).<br><br>
@@ -310,7 +321,10 @@ function round(value, precision) {
 function parsearVariables(campos) {
     var variable_re = /@[\w]+/g
     var variables_usadas = []
-    campos.forEach((campo) => variables_usadas = variables_usadas.concat(campo.match(variable_re)))
+    campos.forEach((campo) => {
+        let matches = campo.match(variable_re)
+        if (matches) variables_usadas = variables_usadas.concat(matches)
+    })
     return new Set(variables_usadas.map((el) => el.substr(1))) // les saco el # inicial y las transformo en un set
 }
 
@@ -346,7 +360,10 @@ export default {
             errorProblema: '',
             errorSolucion: '',
             contieneErrores: 0,
-            mensajeErrores: []
+            mensajeErrores: [],
+
+            sinErrores: false,
+            dragCount: 0
         }
     },
     created() {
@@ -368,6 +385,51 @@ export default {
         }
     },
     methods: {
+        dragLeave() {
+            this.dragCount += 1
+        },
+        dragEnter() {
+            this.dragCount -= 1
+        },
+        fileLoaded(event) {
+            var fileInput = event.target
+            var file = fileInput.files[0];
+            var textType = /text.*/;
+
+            if (file.type.match(textType)) {
+                var reader = new FileReader();
+                var vueThis = this
+                reader.onload = function() {
+                    var parseado = vueThis.parse(reader.result.split("\n"));
+                    vueThis.mostrar_ejercicio(parseado);
+                }
+
+                reader.readAsText(file);    
+            } else {
+                alert("Archivo no sorportado!")
+            }
+        },
+        addFile(e) {
+            this.dragCount = 0
+            let droppedFiles = e.dataTransfer.files;
+            if(!droppedFiles) return;
+            var file = droppedFiles[0];
+
+            var textType = /text.*/;
+            
+            if (file.type.match(textType)) {
+                var reader = new FileReader();
+                var vueThis = this
+                reader.onload = function() {
+                    var parseado = vueThis.parse(reader.result.split("\n"));
+                    vueThis.mostrar_ejercicio(parseado);
+                }
+
+                reader.readAsText(file);    
+            } else {
+                alert("Archivo no sorportado!")
+            }
+        },
         subirImagen(event) {
             const files = event.target.files;
             const formData = new FormData();
@@ -420,6 +482,8 @@ export default {
 
             this.solucion_preview = ''
             this.distractores_preview = []
+
+            this.sinErrores = false
 
         },
         chequear() {
@@ -475,7 +539,7 @@ export default {
                         // Invalid or unexpected token
                         let noDefinido = /([^ ]+) is not defined/
                         let tokenInesperadoDetalle = /Unexpected token '([^']+)'/
-                        let tokenInesperado = /Invalid or unexpected token/
+                        let tokenInesperado = 'Invalid or unexpected token'
                         var mensajeError = err.message
                         let resultado = err.message.match(noDefinido)
                         if (resultado) {
@@ -529,6 +593,7 @@ export default {
                 })
             }
 
+            this.sinErrores = cantidadErrores == 0
             return cantidadErrores
         },
         agregarFunciones() {
@@ -991,24 +1056,6 @@ export default {
                 input.focus()
             })
         },
-        fileLoaded(event) {
-            var fileInput = event.target
-            var file = fileInput.files[0];
-            var textType = /text.*/;
-
-            if (file.type.match(textType)) {
-                var reader = new FileReader();
-                var vueThis = this
-                reader.onload = function() {
-                    var parseado = vueThis.parse(reader.result.split("\n"));
-                    vueThis.mostrar_ejercicio(parseado);
-                }
-
-                reader.readAsText(file);    
-            } else {
-                alert("Archivo no sorportado!")
-            }
-        },
         tituloValido() {
             if (this.titulo != '') this.errorTitulo = '';
         },
@@ -1054,5 +1101,18 @@ export default {
         font-size: 12px;
         line-height: 1.42857;
     }
+
+    .drop-sign {
+        font-size: 20px;
+        padding-bottom: 20pt;
+        padding-top: 20pt;
+        text-align: center;
+        background-color: #e9ecef;
+    }
+
+    .drop-sign p {
+        margin-top: 15pt;
+    }
+
 
 </style>

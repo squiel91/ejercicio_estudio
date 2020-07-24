@@ -2,12 +2,12 @@
     <div class="container pt-4">
         <img style="width: 200pt" :src="require('./img/main_logo.png')">
         <div class="jumbotron mt-4">
-            <h1 class="display-4">Ejercicio parametrizados para EVA</h1>
-            <p class="lead">Las evaluaciones en EVA ahora si son personales.</p>
+            <h1 class="display-4">Ejercicio parametrizados en Moodle</h1>
+            <p class="lead">Las evaluaciones en Moodle ahora si son personales.</p>
             <hr class="my-4">
-            <p>Utiliza el máximo potencial del EVA evaluando con ejercicios parametrizados definidos utilizando Ejercicio Estudio.</p>
+            <p>Utiliza el máximo potencial del Moodle evaluando con ejercicios parametrizados definidos utilizando Ejercicio Estudio.</p>
             <p>Define los parámetros para que cada estudiante tenga ejercicios con valores numéricos y respuestas diferentes.</p>
-            <p>Utiliza el editor para definir ejercicios multiple opción parametrizados que puedes importar al EVA y utilizarlos directamente en tus evaluaciones.</p>
+            <p>Utiliza el editor para definir ejercicios multiple opción parametrizados que puedes importar al Moodle y utilizarlos directamente en tus evaluaciones.</p>
             <p class="lead">
                 <router-link to="/editor" class="btn btn-primary btn-lg">Abrir editor</router-link>
             </p>
@@ -55,7 +55,7 @@
                 <div class="col-md-3">
                     <h4>3.</h4>
                     <img class="step" style="width: 100%" :src="require('./img/step3.png')">
-                    <h4>Importalo en EVA</h4>
+                    <h4>Importalo a Moodle</h4>
                 </div>
                 <div class="col-md-3">
                     <h4>4.</h4>
@@ -100,7 +100,7 @@
                             <path fill-rule="evenodd" d="M10.354 5.646a.5.5 0 0 1 0 .708l-8 8a.5.5 0 0 1-.708-.708l8-8a.5.5 0 0 1 .708 0z"/>
                         </svg>
                     </h5>
-                    <p>Todo lo que hay que saber para definir el ejercicio y agregarlo a una evaluación (cuestionario) en EVA.</p>
+                    <p>Todo lo que hay que saber para definir el ejercicio y agregarlo a una evaluación (cuestionario) en Moodle.</p>
                 </a>
                 <a class="list-group-item list-group-item-action" href="/exercise_standard_specification_which_promotes_collaboration_and_reusing.pdf">
                     <h5 style="color: #007bff;">Articulo Científico 

@@ -1,0 +1,16 @@
+Titulo: Calculo área de triángulo
+Problema: Cuál es el área de un triángulo de base &base metros y altura @altura metros?
+Solucion: @area metros cuadrados.
+Distractor: @doble metros cuadrados.
+
+Parametro: base\nMínimo: 1\nMaximo: 10\nDecimales: 2\nParametro: altura\nConjunto: 2, 2.5, 4.1, 5, 6.23\nComputo: area\nFormula: (base * altura) / 2\nComputo: doble\nFormula: base + altura
+
+Sin variabilidad
+Con variabilidad
+Con LaTeX
+Ejemplo Matematica
+Ejemplo Fisica
+Ejemplo Economia
+
+Ejemplo 1
+Ejemplo 2

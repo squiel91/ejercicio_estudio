@@ -32,6 +32,9 @@ export default {
             if (event.target.value != '') this.error = ''
             this.$emit('input', event.target.value)
         },
+        reset() {
+            this.error = ''
+        },
         esValido() {
             if (this.value == '') {
                 this.error = 'El distractor no puede ser vacio. Lo puedes eliminar sino.'

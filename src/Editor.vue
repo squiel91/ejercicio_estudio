@@ -5,9 +5,11 @@
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <router-link to="/">
-                            <svg class="bi bi-chevron-left" width="2em" height="2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-                        </svg>
+                            <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-left-circle" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path fill-rule="evenodd" d="M8.354 11.354a.5.5 0 0 0 0-.708L5.707 8l2.647-2.646a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708 0z"/>
+                            <path fill-rule="evenodd" d="M11.5 8a.5.5 0 0 0-.5-.5H6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5z"/>
+                            </svg>
                         </router-link>
                         <img :src="require('./img/main_logo.png')" style="height:10vh;" alt="main logo">
                     </div>
@@ -19,7 +21,7 @@
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                 <span @click="descargar" class="dropdown-item" href="#">Especificacion (.txt)</span>
                                 <div class="dropdown-divider"></div>
-                                <span @click="descargarEva" class="dropdown-item" href="#">EVA (.xml)</span>
+                                <span @click="descargarEva" class="dropdown-item" href="#">Moodle    (.xml)</span>
                             </div>
                         </div>
                         <div style="display: inline-block" class="dropdown float-right">
@@ -28,10 +30,12 @@
                             </button>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                 <span class="dropdown-item" @click="cargarEjemplo(0)">Ejercicio sin variabilidad</span>
-                                <span class="dropdown-item" @click="cargarEjemplo(1)">Reacciones viga apoyada</span>
-                                <span class="dropdown-item" @click="cargarEjemplo(2)">Cortante viga apoyada volada</span>
-                                <span class="dropdown-item" @click="cargarEjemplo(3)">Momento viga apoyada volada</span>
-                                <span class="dropdown-item" @click="cargarEjemplo(4)">Integrales indefinidas</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(1)">Ejercicio con variabilidad</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(2)">Ejercicio con LaTeX</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(3)">Ejercicio de Matemática</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(4)">Ejercicio Estabilidad</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(5)">Ejercicio Programación</span>
+                                <span class="dropdown-item" @click="cargarEjemplo(6)">Ejercicio Contabilidad</span>
                                 <div class="dropdown-divider"></div>
                                 <span class="dropdown-item" @click="$refs.cargarEjercicio.click()">Desde tu PC</span>
                                 <div class="dropdown-divider"></div>
@@ -56,8 +60,9 @@
                     <div v-show="sinErrores">
                         <b-img class="mb-3" v-if="imagen != ''" :src="imagen" fluid thumbnail></b-img>
                         <div class="mb-4" ref="problemaEjemplo" v-katex:auto></div>
-                        <p><input type="radio" checked=true disabled> {{ solucion_preview }} <b-badge>Solución</b-badge></p>
-                        <p v-for="(distractor, indice) in distractores_preview" :key="indice"><input type="radio" disabled> {{ distractor }}</p>
+                        <div ref="opciones">
+                            <p v-for="(opcion_preview, indice) in opciones_preview" :key="indice"><input type="radio" disabled> {{ opcion_preview.texto }} <b-badge v-if="opcion_preview.correcta">Solución</b-badge></p>
+                        </div>
                     </div>
                     <div v-show="!sinErrores">
                         <img class="card-img pl-5 pr-5 pt-5 pb-3" :src="require('./img/error_preview.png')">
@@ -72,7 +77,7 @@
                     </button>
                 </div>
             </b-sidebar>
-            <div v-if="contieneErrores" @click="contieneErrores = 0" class="alert alert-danger" role="alert">
+            <div v-if="contieneErrores" @click="contieneErrores = 0" class="alert mt-3 alert-danger" role="alert">
                 <strong>La especificación del ejercicio contiene {{ contieneErrores }} {{ contieneErrores == 1? "error" : "errores" }}!</strong><br>
                 <ul class="mt-3" v-if="mensajeErrores.length > 0">
                     <li v-for="(error, index) in mensajeErrores" :key="index">{{ error }}</li>
@@ -80,15 +85,15 @@
                 Corrige todos los errores para poder proceder a descargar. Vas a ver los campos con error aquí o marcados en rojo en el campo respectivo.
 
             </div>
-            <div  style="text-align: center;" class="mt-2">
-            <b-button size="sm" variant="light" pill v-b-toggle.sidebar-1>
-                <svg width="0.8em" height="0.8em" viewBox="0 0 16 16" class="bi bi-search" fill="black" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
-                    <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
-                </svg>
-                Vista Previa
-            </b-button>
-            </div>           
+            <div  @click="preview" style="text-align: center;" class="mt-2">
+                <b-button  size="sm" variant="light" pill v-b-toggle.sidebar-1>
+                    <svg width="0.8em" height="0.8em" viewBox="0 0 16 16" class="bi bi-search" fill="black" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+                        <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+                    </svg>
+                    Vista Previa
+                </b-button>
+            </div>         
         <div class="form-group">
             <label for="titulo">Título</label>
                 <svg @click="ayudaTitulo = !ayudaTitulo" class="bi bi-question-circle float-right" width="1.2em" height="1.2em" viewBox="0 0 16 16" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
@@ -211,15 +216,15 @@
             <div v-if="parametros.length == 0 && !ayudaParametros" class="alert alert-primary" role="alert">
                 Define parametros para darle variabilidad al ejercicio!
             </div>
-            <draggable v-model="parametros" group="parametro" @start="drag=true" @end="drag=false">
-                <parametro 
-                    v-for="(parametro, indice) in parametros" 
-                    @eliminar="parametros.splice(indice, 1)"
-                    v-model="parametros[indice]"
-                    ref="parametros"
-                    :key="indice"
-                />
-            </draggable>
+            <parametro
+                v-for="(parametro, indice) in parametros"
+                @arriba="cambiarPosicion(parametros, true, indice)"
+                @abajo="cambiarPosicion(parametros, false, indice)"
+                @eliminar="parametros.splice(indice, 1)"
+                v-model="parametros[indice]"
+                ref="parametros"
+                :key="indice"
+            />
             <div v-if="ayudaParametros" @click="ayudaParametros = false" class="alert alert-primary" role="alert">
                 Son los <strong>parámetros</strong> variables que agregan variabilidad al ejercicio.<br><br>
                 Este parámetro lo puedes usar en las secciones Problemas, Solución y Distractores como un número cualquiera antecediendo el nombre con el símbolo "@'" Al momento de mostrarse al estudiante, el parámetro se instanciará de forma aleatoria de acuerdo a la especificación.<br><br>
@@ -248,14 +253,14 @@
             <div v-if="computos.length == 0  && !ayudaComputos" class="alert alert-primary" role="alert">
                 Define computos para agregar complejidad al ejercicio!
             </div>
-            <draggable v-model="computos" group="computo" @start="drag=true" @end="drag=false">
-                <computo 
-                    v-for="(computo, indice) in computos" 
-                    v-model="computos[indice]"
-                    @eliminar="computos.splice(indice, 1)"
-                    ref="computos"
-                    :key="indice"/>
-            </draggable>
+            <computo
+                v-for="(computo, indice) in computos" 
+                @arriba="cambiarPosicion(computos, true, indice)"
+                @abajo="cambiarPosicion(computos, false, indice)" 
+                v-model="computos[indice]"
+                @eliminar="computos.splice(indice, 1)"
+                ref="computos"
+                :key="indice"/>
             <div v-if="ayudaComputos" @click="ayudaComputos = false" class="alert alert-primary" role="alert">
                 Los <strong>cómputos</strong> permiten introducir cálculos complejos a los ejercicios. El cómputo se instancia en base a la especificación de su fórmula y con la cantidad de decimales especificados.<br><br>
                 Se pueden utilizar numeros, parámetros, cómputos antes definidos, operadores y fórmulas matematicas (la lista exhaustiva se pueden conultar al final de la <a target="_blank" href="https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub">Guía de usuario</a>).
@@ -276,7 +281,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 col-lg-6 pb-5">
-                    <h4>Ejercicio Estudio v 0.8</h4>
+                    <h4>Ejercicio Estudio v 0.10</h4>
                     <p>Este software surge como una colaboración entre la Facultad de Ingeniería y la FADU para generar ejericicos parametrizados.</p>
                     <p>Dedicado a <a href="https://www.youtube.com/watch?v=E8WFA_B_Ci4&fbclid=IwAR3PHGQ4qZYrji1UCK-VXQVhE8zVH5aEZzN6-DHoihrtUR1QUfANFWsWQXk">Omar Gil</a>, precursor de este proyecto.</p>
                     <a href="http://udelar.edu.uy/portal/">Universidad de la Repúbica</a> 2020 ©
@@ -311,11 +316,30 @@ import axios from 'axios'
 
 const CANTIDAD_INSTANCIAS = 100
 const SIMBOLO_VAR = "@"
-const NAMESPACING = "EE_PAR_"
+const NAMESPACING = "EE_"
 
 function round(value, precision) {
     var multiplier = Math.pow(10, precision || 0);
     return Math.round(value * multiplier) / multiplier;
+}
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
 }
 
 function parsearVariables(campos) {
@@ -327,8 +351,6 @@ function parsearVariables(campos) {
     })
     return new Set(variables_usadas.map((el) => el.substr(1))) // les saco el # inicial y las transformo en un set
 }
-
-import draggable from 'vuedraggable'
 
 export default {
     name: 'App',
@@ -354,6 +376,7 @@ export default {
 
             solucion_preview: '',
             distractores_preview: [],
+            opciones_preview: [],
 
             mensajeImagen: 'Elige una imágen',
             errorTitulo: '',
@@ -370,7 +393,6 @@ export default {
         this.agregarFunciones()
     },
     components: {
-        draggable,
         distractor: Distractor,
         parametro: Parametro,
         computo: Computo
@@ -385,6 +407,25 @@ export default {
         }
     },
     methods: {
+        cambiarPosicion(lista, paraArriba, indice) {
+            if (paraArriba) {
+                if (indice > 0) {
+                    let arriba = lista[indice - 1];
+                    let actual = lista[indice];
+        
+                    this.$set(lista, indice - 1, actual);
+                    this.$set(lista, indice, arriba);
+                }
+            } else {
+                if (indice < lista.length - 1) {
+                    let actual = lista[indice];
+                    let abajo = lista[indice + 1];
+        
+                    this.$set(lista, indice + 1, actual);
+                    this.$set(lista, indice, abajo);
+                }
+            }
+        },
         dragLeave() {
             this.dragCount += 1
         },
@@ -482,6 +523,7 @@ export default {
 
             this.solucion_preview = ''
             this.distractores_preview = []
+            this.opciones_preview = []
 
             this.sinErrores = false
 
@@ -531,7 +573,6 @@ export default {
                     try {
                         var value = round(eval(computo.formula), computo.decimales)
                         if (isNaN(value)) throw Error('La fórmula contiene un error. Definiste bien las funciones con sus respectivos parametros? Perdon por no poder ser mas especifico!')
-                        console.log(computo.nombre + " = " + value)
                         eval("window." + computo.nombre + " = " + value)
                     } catch(err) {
                         // aaa is not defined
@@ -550,7 +591,7 @@ export default {
                                 mensajeError = "Estas seguro que el símbolo '" + resultado[1] + "' esta bien colocado?"
                             } else {
                                 if (tokenInesperado == err.message) {
-                                    mensajeError = "Hay un simbolo inesperado! Resuerda que en la formula no debes anteponer el @ a las variables. Solo se antepone en la sección Problema, Solucion y Distractores."
+                                    mensajeError = "Hay un simbolo inesperado! Recuerda que en la formula no debes anteponer el @ a las variables. Solo se antepone en la sección Problema, Solucion y Distractores."
                                 }
                             }
                         }
@@ -559,7 +600,7 @@ export default {
                     }
                 })
 
-                // TODO: Todas las variables definidas son usadas
+                // Todas las variables definidas son usadas
                 var ya_usadas = parsearVariables([this.problema, this.solucion, ...this.distractores])
                 var tienen_que_aparecer = new Set()
                 
@@ -576,10 +617,10 @@ export default {
 
                 cantidadErrores += tienen_que_aparecer.size
                 tienen_que_aparecer.forEach((noUtilizada) => {
-                    this.mensajeErrores.push("La variable (parámetro o cómputo) '" + noUtilizada + "' se ha definido pero no lo has utilizado.")
+                    this.mensajeErrores.push("La variable (parámetro o cómputo) '" + noUtilizada + "' se ha definido pero no la has utilizado.")
                 })
 
-                // TODO: Todas las variables usadas estan definidas
+                // Todas las variables usadas estan definidas
                 var variables_usadas = parsearVariables([this.problema, this.solucion, ...this.distractores])
                 var variables_definidas = this.parametros.map((par) => par.nombre).concat(this.computos.map((comp) => comp.nombre))
 
@@ -590,6 +631,39 @@ export default {
                 cantidadErrores += variables_usadas.size
                 variables_usadas.forEach((noDefinida) => {
                     this.mensajeErrores.push("La variable (parámetro o cómputo) '" + noDefinida + "' la has usado pero no la has definido!")
+                })
+
+                // El nombre de las variables no se repiten
+                var nombreVariables = {};
+                ([...this.parametros, ...this.computos]).forEach((variable) => {
+                    let nombre = variable.nombre
+                    if (nombre in nombreVariables) {
+                        nombreVariables[nombre] += 1
+                    } else {
+                        nombreVariables[nombre] = 1
+                    }
+                }) 
+                for (let nombre in nombreVariables) {
+                    if (nombreVariables[nombre] > 1) {
+                        cantidadErrores += 1
+                        this.mensajeErrores.push(`Usaste el nombre '${nombre}' ${nombreVariables[nombre]} veces.  El nombre de las variables (parámetro y cómputo) debe ser único.`)
+                    }
+                }
+            }
+
+            // DESPROLIJO: le asigno un valor acorde de decimales al parametro por conjunto
+            if (cantidadErrores == 0) {
+                this.parametros.forEach((parametro) => {
+                    if (!parametro.esIntervalo) {
+                        var maxDecimales = 0
+                        parametro.conjunto.forEach((elemento) => {
+                            let stringified = String(elemento)
+                            if (stringified.includes('.')) {
+                                maxDecimales = Math.max(maxDecimales, stringified.split('.')[1].length)
+                            }
+                        })
+                        parametro.decimales = Math.min(4, maxDecimales)
+                    }
                 })
             }
 
@@ -703,6 +777,7 @@ export default {
                     distractores_preview = distractores_preview.map( (distractor) => distractor.replace(regexParametro, eval(parametro.nombre) + '$1'))
                 
                 })
+                
                 this.computos.forEach(computo => {
                     let regexComputo = new RegExp(SIMBOLO_VAR + computo.nombre + '(\\W|$)', 'g');
                     problema_preview = problema_preview.replace(regexComputo, eval(computo.nombre) + '$1')
@@ -713,8 +788,48 @@ export default {
                 this.solucion_preview = solucion_preview    
                 this.distractores_preview = distractores_preview    
 
+                this.opciones_preview = []
+
+                this.opciones_preview.push({
+                    texto: solucion_preview,
+                    correcta: true
+                })
+                distractores_preview.forEach((distractor_preview) => {
+                    this.opciones_preview.push({
+                        texto: distractor_preview,
+                        correcta: false
+                    })
+                })
+
+                shuffle(this.opciones_preview);
+
+
+
                 this.$forceUpdate();
             }
+        },
+        calcularDecimales(texto) {
+            var decimalesMaximo = 0
+            var nombreVariablesUsadas = parsearVariables([texto])
+            nombreVariablesUsadas.forEach((nombreVariable) => {
+                let encontrado = false
+                for (let indice in this.parametros) {
+                    if (this.parametros[indice].nombre == nombreVariable) {
+                        decimalesMaximo = Math.max(this.parametros[indice].decimales, decimalesMaximo) 
+                        break
+                    }
+
+                }
+                if (!encontrado) {
+                    for (let indice in this.computos) {
+                        if (this.computos[indice].nombre == nombreVariable) {
+                            decimalesMaximo = Math.max(this.computos[indice].decimales, decimalesMaximo) 
+                            break
+                        }
+                    }
+                }
+            })
+            return decimalesMaximo
         },
         descargarEva() {
             this.contieneErrores = this.chequear()
@@ -747,18 +862,18 @@ export default {
             <tolerance>0.01</tolerance>
             <tolerancetype>1</tolerancetype>
             <correctanswerformat>1</correctanswerformat>
-            <correctanswerlength>2</correctanswerlength>
+            <correctanswerlength>${this.calcularDecimales(this.solucion)}</correctanswerlength>
             <feedback format="moodle_auto_format"><text/></feedback>
         </answer>`
             
-                this.distractores.forEach(distractor => {
+                this.distractores.forEach(distractor => {       
                     ejercicio += `
         <answer fraction="0">
             <text>${this.traducirSintaxis(distractor)}</text>
             <tolerance>0.01</tolerance>
             <tolerancetype>1</tolerancetype>
             <correctanswerformat>1</correctanswerformat>
-            <correctanswerlength>2</correctanswerlength>
+            <correctanswerlength>${this.calcularDecimales(distractor)}</correctanswerlength>
             <feedback format="moodle_auto_format"><text/></feedback>
         </answer>`
                 })
@@ -872,11 +987,13 @@ export default {
         },
         cargarEjemplo(i) {
             var ejercicios = [
-                'Titulo: Tipos de tiángulos\nProblema: Cuál es el tipo de triángulo que tiene todos sus tres lados iguales?\nSolución: Equilátero\nDistractor: Escaleno\nDistractor:Isóceles\n',
-                'Titulo: Cálculo de reacciones en una viga apoyada\nImagen: https://tiantian.io/uploads/viga_pregunta_1.jpg\nProblema: Para la viga apoyada en \\(A\\) y en \\(B\\) de @L m de longitud que semuestra en la figura, calcular el valor de \\(R_A\\), la reacción en el apoyo \\(A\\).\nSolución: @correcta\nDistractor: @esRB\nDistractor: @noQ\nDistractor: @resultantedeqenmitadtramo\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\n\n',
-                'Titulo: Cálculo de cortante en viga apoyada volada\nImagen: https://tiantian.io/uploads/viga_pregunta_2_3.jpg\nProblema: En la viga de la figura los valores de los parámetros son \\(a = @a\\) \\(\\,m\\) y \\(q = @q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\) la expresión del cortantees \\[V(x)=mx+n.\\] Hallar dicha expresión y dar el valor de \\(n\\).\nSolución: @correcta\nDistractor: @noRA\nDistractor: @puntualesporx\nDistractor: @sinpuntuales\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\nComputo: correcta\nFormula: q*(0.5+29*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: -2*q\nDecimales: 1\n\nComputo: puntualesporx\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: sinpuntuales\nFormula: 0\nDecimales: 0\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: i\nFormula: a\nDecimales: 2\n\nComputo: s\nFormula: 3*a\nDecimales: 2\n',
-                'Titulo: Cálculo de momento en viga apoyada volada\nImagen: https://tiantian.io/uploads/viga_pregunta_2_3.jpg\nProblema: En la viga de la figura los valores de los parámetros son \\(a=@a\\) \\(\\,m\\) y \\(q=@q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\)  la expresión del momento flector es \\[M(x)=mx^2+nx+p.\\] Hallar dicha expresión y dar el valor de \\(m+n\\).\nSolución: @correcta\nDistractor: @noRA\nDistractor: @distribuida2qporxporx2\nDistractor: @distribuidasporxporx2\n\nParametro: a\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: b\nMínimo: 0.5\nMáximo: 1\nDecimales: 1\n\nParametro: Q\nConjunto: 200, 250, 300, 350\n\nParametro: q\nMínimo: 100\nMáximo: 200\nDecimales: 0\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\nParametro: a\nConjunto: 0.5, 1, 1.5, 2, 2.5\n\nParametro: q\nConjunto: 100, 200, 300, 400, 500, 150, 250, 350, 450, 50\n\n\nComputo: correcta\nFormula: (q*(2*a*a+4*a*b+2*b*b)+Q*b)/(a+2*b)\nDecimales: 0\n\nComputo: noQ\nFormula: (q*(2*a*a+4*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: esRB\nFormula: (Q*(a+b)+q*(2*a*b+2*b*b))/(a+2*b)\nDecimales: 0\n\nComputo: resultantedeqenmitadtramo\nFormula: (q*(a+b)*(a+2*b))/(a+2*b)\nDecimales: 0\n\nComputo: L\nFormula: 2*(a+b)\nDecimales: 0\n\nComputo: correcta\nFormula: q*(0.5+29*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: -2*q\nDecimales: 1\n\nComputo: puntualesporx\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: sinpuntuales\nFormula: 0\nDecimales: 0\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: correcta\nFormula: q*(-0.5+53*a/8)\nDecimales: 1\n\nComputo: noRA\nFormula: 3*q*(a-1)\nDecimales: 1\n\nComputo: distribuida2qporxporx2\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\n\nComputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\n\nComputo: i\nFormula: 3*a\nDecimales: 1\n\nComputo: s\nFormula: 5*a\nDecimales: 1\n\nComputo: distribuidasporxporx2\nFormula: q*(-0.5+5*a/8)\nDecimales: 2\n',
-                'Titulo: Integrales indefinidas\nImagen: https://tiantian.io/uploads/optimizacion.png\nProblema: La función \\[F(x)= \\int_{-1}^{x}{(|1-x|-x)dx}\\] admite para \\(x \\leq @menorigual\\) una expresión \\(F(x)=ax^2+bx + c\\), en forma de un polinomio de grado menor o igual a 2.\nDeterminar la suma a + b + c de los coeficientes de ese polinomio.\nSolución: @correcto\nDistractor: @distractor_a \nDistractor: @distractor_b \nDistractor: Ningúna de las demás es correcta\nParámetro: limiteinferior\nMáximo: -1\nMinimo: -10\nDecimales:2\nParámetro: constanteintegracion\nMáximo: 20\nMinimo: 1\nDecimales:2\nParámetro: menorigual\nMáximo: 9\nMinimo: 3\nComputo: correcto\nFórmula: limiteinferior*constanteintegracion-menorigual\nDecimales:1\nComputo: distractor_a\nFórmula: limiteinferior*constanteintegracion\nDecimales: 1\nComputo: distractor_b\nFórmula: limiteinferior*menorigual\nDecimales: 1'
+                'Titulo: Tipos de tiángulos\nProblema: ¿Cuál es el tipo de triángulo que tiene todos sus tres lados iguales?\nSolución: Equilátero\nDistractor: Escaleno\nDistractor:Isóceles\n',
+                'Titulo: Cálculo área de triángulo\nProblema: ¿Cuál es el área de un triángulo de base @base metros y altura @altura metros?\nSolución: @area metros cuadrados.\nDistractor: @doble metros cuadrados.\nDistractor:Ninguna de las anteriores\nParametro: base\nMínimo: 1\nMaximo: 10\nDecimales: 2\nParametro: altura\nConjunto: 2, 2.5, 4.1, 5, 6.23\nComputo: area\nFormula: (base * altura) / 2\nComputo: doble\nFormula: base + altura',
+                'Título: Función cuadrática\nProblema: Dada la función\n\\[f(x) = @a x^2 + @b x @c\\]\n¿Cuál es la solución en los puntos \\(f(@x1)\\) y \\(f(@x2)\\)?\nSolución: f(@x1) = @solX1 y f(@x2) = @solX2\nDistractor: f(@x1) = @solX2 y f(@x2) = @solX1\nDistractor: Ninguna de las otras\nParametro: a\nMinimo: 2\nMaximo: 4\nDecimales: 1\nParametro: b\nMinimo: 4\nMaximo: 9\nDecimales: 1\nParametro: c\nMinimo: -6\nMaximo: -2\nDecimales: 1\nParametro: x1\nMinimo: 10\nMaximo: 20\nDecimales: 1\nParametro: x2\nMinimo: 25\nMaximo: 35\nDecimales: 1\n\nCómputo: solX1\nFormula: a * pow(x1, 2)+ b * x1 + c\nDecimales: 2\nCómputo: solX2\nFormula: a * pow(x2, 2)+ b * x2 + c\nDecimales: 2\n',
+                'Titulo: Integrales indefinidas\nImagen: https://tiantian.io/uploads/optimizacion.png\nProblema: La función \\[F(x)= \\int_{-1}^{x}{(|1-x|-x)dx}\\] admite para \\(x \\leq @menorIgual\\) una expresión \\(F(x)=ax^2+bx + c\\), en forma de un polinomio de grado menor o igual a 2.\nDeterminar la suma a + b + c de los coeficientes de ese polinomio.\nSolución: @correcto\nDistractor: @distractorA \nDistractor: @distractorB \nDistractor: Ningúna de las demás es correcta\nParámetro: limiteInferior\nMáximo: -1\nMinimo: -10\nDecimales:2\nParámetro: constanteIntegracion\nMáximo: 20\nMinimo: 1\nDecimales:2\nParámetro: menorIgual\nMáximo: 9\nMinimo: 3\nComputo: correcto\nFórmula: limiteInferior*constanteIntegracion-menorIgual\nDecimales:1\nComputo: distractorA\nFórmula: limiteInferior*constanteIntegracion\nDecimales: 1\nComputo: distractorB\nFórmula: limiteInferior*menorIgual\nDecimales: 1',
+                'Título: Cálculo de momento en viga apoyada volada\nProblema: En la viga de la figura los valores de los parámetros son \\(a=@a\\) \\(\\,m\\) y \\(q=@q\\) y \\(R_A=@RA\\). Para los \\(@i \\leq x < @s\\)  la expresión del momento flector es \\[M(x)=mx^2+nx+p.\\] Hallar dicha expresión y dar el valor de \\(m+n\\).\nImagen: https://tiantian.io/uploads/viga_pregunta_2_3.jpg\nSolución: @correcta\nDistractor: @noRA\nDistractor: @distribuida2qporxporx2\nDistractor: @distribuidasporxporx2\nParametro: a\nMinimo: 0.5\nMaximo: 1\nDecimales: 0\nParametro: b\nMinimo: 0.5\nMaximo: 1\nDecimales: 0\nParametro: Q\nConjunto: 200,250,300,350\nParametro: q\nConjunto: 100,200,300,400,500,150,250,350,450,50\nCómputo: correcta\nFormula: (q*(2*pow(a,2)+4*a*b+2*pow(b,2))+Q*b)/(a+2*b)\nDecimales: 0\nCómputo: noRA\nFormula: -2*q\nDecimales: 1\nCómputo: RA\nFormula: q*(2.5+29*a/8)\nDecimales: 2\nCómputo: distribuida2qporxporx2\nFormula: a*q*(-2.5-29*a/8)\nDecimales: 1\nCómputo: i\nFormula: 3*a\nDecimales: 1\nCómputo: s\nFormula: 5*a\nDecimales: 1\nCómputo: distribuidasporxporx2\nFormula: q*(-0.5+5*a/8)\nDecimales: 2\n',
+                'Título: Funcion recursiva Fibonacci\nProblema: Dada la siguiente función en Javascript:\nfunction recursiva(num) {\n    if (num <= 1) return 1;\n    return recursiva(num - 1) + recursiva(num - 2);\n}\n¿Cuál de las siguientes respuestas es verdadera?\nSolución: recursiva(@n) == @correcta\nDistractor: recursiva(@n) == @incorrecta\nDistractor: recursiva(@nMas1) == @correcta\nDistractor: Ninguna, entra en un loop infinito\nParametro: n\nConjunto: 6,8,10,12,14,16,18\nCómputo: numeroAureo\nFormula: (1+sqrt(5))/2\nDecimales: 4\nCómputo: correcta\nFormula: round(pow(numeroAureo, n) / sqrt(5), 0)\nDecimales: 0\nCómputo: nMas1\nFormula: n+1\nDecimales: 0\nCómputo: incorrecta\nFormula: round(pow(numeroAureo, n) / sqrt(5), 0) + 4\nDecimales: 0\n',
+                'Título: Cálculo de interés\nProblema: El interés que produce un capital de $@capital, colocado al @tasa% efectivo anual de interés compuesto al cabo de @tiempo meses es:\nSolución: $ @correcta\nDistractor: $ @incorrectaSimple\nDistractor: $ @incorrectaTiempo\nDistractor: Ninguna de las otras\nParametro: capital\nConjunto: 10000,15000,20000,25000,30000,35000,40000,45000,50000\nParametro: tasa\nMinimo: 5\nMaximo: 15\nDecimales: 0\nParametro: tiempo\nMinimo: 6\nMaximo: 36\nDecimales: 0\nCómputo: correcta\nFormula: capital*pow(1+tasa/100,tiempo/12)-capital\nDecimales: 2\nCómputo: incorrectaSimple\nFormula: capital*tasa/100*tiempo/12\nDecimales: 2\nCómputo: incorrectaTiempo\nFormula: capital*pow(1+tasa/100,tiempo)-capital\nDecimales: 2\n'
             ]
             var parseado = this.parse(ejercicios[i].split("\n"));
             this.mostrar_ejercicio(parseado);
@@ -892,16 +1009,29 @@ export default {
             })
 
             // formulas
-            this.computos.forEach(computo => {
+            var computos_calculados_antes = []
+
+            this.computos.forEach((computo) => {
                 let formula_parcial = computo.formula
-                
                 this.parametros.forEach(paramentro => {
                     let regexComputo = new RegExp('(\\W|^)' + paramentro.nombre + '(?=\\W|$)', 'g');
                     formula_parcial = formula_parcial.replace(regexComputo, '$1{' + NAMESPACING + paramentro.nombre + '}')
                 })
+
+                computos_calculados_antes.forEach((computo_anterior) => {
+                    let regexComputo = new RegExp('(\\W|^)' + computo_anterior.nombre + '(?=\\W|$)', 'g');
+                    formula_parcial = formula_parcial.replace(regexComputo, '$1' + computo_anterior.formula)
+                })
+
                 while (formula_parcial.includes('{{'))
                     formula_parcial = formula_parcial.replace('{{', '{').replace('}}', '}')
                 let formula_eva = `{= round(${formula_parcial}, ${computo.decimales})}` // convert_eva_operators
+                
+                computos_calculados_antes.push({
+                    nombre: computo.nombre,
+                    formula: `round(${formula_parcial}, ${computo.decimales})`
+                })
+
                 let regexComputoFinal = new RegExp(SIMBOLO_VAR + computo.nombre + '(\\W|$)', 'g');
                 texto = texto.replace(regexComputoFinal, formula_eva + '$1')
             })
@@ -911,60 +1041,70 @@ export default {
         mostrar_ejercicio(ejercicio) {
             this.reinicializar()
 
-            this.parseado = ejercicio[0]
-            this.titulo = ejercicio.titulo[0];
-            if (ejercicio.imagen) {
-                console.log(ejercicio.imagen)
-                this.imagen = ejercicio.imagen[0]
-            } else {
-                this.imagen = ''
-            }
-            this.problema = ejercicio.problema[0];
-            this.solucion = ejercicio.solucion[0];
-            
-            this.distractores = []
+            try {
+                this.parseado = ejercicio[0]
+                this.titulo = ejercicio.titulo[0];
+                if (ejercicio.imagen) {
+                    this.imagen = ejercicio.imagen[0]
+                } else {
+                    this.imagen = ''
+                }
+                this.problema = ejercicio.problema[0].trim();
+                this.solucion = ejercicio.solucion[0].trim();
+                
+                this.distractores = []
 
-            if (ejercicio.distractor)
-                ejercicio.distractor.forEach(distractor => {
-                    this.distractores.push(distractor)
-                })
-            
-            if (ejercicio.parametro)
-                ejercicio.parametro.forEach(parametro => {
-                    if ('conjunto' in parametro) {
-                        this.parametros.push({
-                            esIntervalo: false,
-                            nombre: parametro.base[0],
-                            minimo: null, 
-                            maximo: null, 
-                            decimales: 2,
-                            conjunto: parametro.conjunto[0].split(',').map(literal => parseFloat(literal))
-                        })
-                    } else {
-                        this.parametros.push({
-                            esIntervalo: true,
-                            nombre: parametro.base[0], 
-                            minimo: parseFloat(parametro.minimo[0]), 
-                            maximo: parseFloat(parametro.maximo[0]), 
-                            decimales: 'decimales' in parametro? parseInt(parametro.decimales[0]) : 2,
-                            conjunto: []
-                        })
-                    }
-                })
-
-            if (ejercicio.computo)
-                ejercicio.computo.forEach(computo => {
-                    this.computos.push({
-                        nombre: computo.base[0], 
-                        formula: computo.formula[0], 
-                        decimales: 'decimales' in computo? parseInt(computo.decimales[0]) : 2
+                if (ejercicio.distractor)
+                    ejercicio.distractor.forEach(distractor => {
+                        this.distractores.push(distractor.trim())
                     })
-                })
+                
+                if (ejercicio.parametro)
+                    ejercicio.parametro.forEach(parametro => {
+                        if ('conjunto' in parametro) {
+                            this.parametros.push({
+                                esIntervalo: false,
+                                nombre: parametro.base[0].trim(),
+                                minimo: null, 
+                                maximo: null, 
+                                decimales: 2,
+                                conjunto: parametro.conjunto[0].split(',').map(literal => parseFloat(literal))
+                            })
+                        } else {
+                            this.parametros.push({
+                                esIntervalo: true,
+                                nombre: parametro.base[0].trim(), 
+                                minimo: parseFloat(parametro.minimo[0]), 
+                                maximo: parseFloat(parametro.maximo[0]), 
+                                decimales: 'decimales' in parametro? parseInt(parametro.decimales[0]) : 2,
+                                conjunto: []
+                            })
+                        }
+                    })
 
-            var thisVue = this
-            this.$nextTick(() => {
-                thisVue.renderizar()
-            })
+                if (ejercicio.computo)
+                    ejercicio.computo.forEach(computo => {
+                        this.computos.push({
+                            nombre: computo.base[0].trim(), 
+                            formula: computo.formula[0], 
+                            decimales: 'decimales' in computo? parseInt(computo.decimales[0]) : 2
+                        })
+                    })
+
+                var thisVue = this
+                this.$nextTick(() => {
+                    thisVue.renderizar()
+
+                    for (let i in thisVue.distractores) thisVue.$refs.distractores[i].reset()
+                    for (let i in thisVue.parametros) {
+                        thisVue.$refs.parametros[i].reset()
+                    }
+                    for (let i in thisVue.computo) thisVue.$refs.computos[i].reset()
+                })
+            } catch (error) {
+                alert('Hubo un error al procesar el archivo!\nEl formato parece no ser válido.')
+                throw error
+            }
             
         },
         splited(keys, text_array) {

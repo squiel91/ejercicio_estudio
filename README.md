@@ -6,7 +6,7 @@
 ## Introduccion
 En teoría los ejercicios se pueden especificar utilizando un editor de texto siguiendo el micro-formato (similar a [YAML](https://en.wikipedia.org/wiki/YAML)) especificado en la [guía de usuario](https://docs.google.com/document/d/e/2PACX-1vRGg1dQgZehG6qdyqndAajXpSiR3Ke0ncQDssaZgzz9vRTT_7xCIG0CrSTL8cgtu_6MvjMUQ_AWIwHY/pub). Esta no es la forma mas conveniente ni recomendada ya que esta herramienta [Ejercicio Estudio](https://ejercicioestudio.edu.uy/) lo hace mas intuitivo, realiza chequeos sintacticos y semanticos y permite ver una vista previa del ejercicio.
 
-Luego de definir el ejercicio podemos bajar la especificación del ejercicio (un archivo de texto) para compartirlo o guardarlo. Este ejercicio lo podemos importar en el Ejercicio Estudio y seguir modificandolo luego. En cualquier momento en la misma herramienta podemos exportarlo a formato Moodle (bajando un archivo XML) para luego importarlo al banco de preguntas del Moodle. Finalmente cuando creamos una nueva evaluación podemos agregandolo del banco de preguntas como cualquier otro ejercicio.
+Luego de definir el ejercicio podemos bajar la especificación del ejercicio (un archivo de texto) para compartirlo o guardarlo. Este ejercicio lo podemos importar al Ejercicio Estudio y seguir modificandolo luego. En cualquier momento en la misma herramienta podemos exportarlo a formato Moodle (bajando un archivo XML) para luego importarlo al banco de preguntas del Moodle. Finalmente cuando creamos una nueva evaluación podemos agregandolo del banco de preguntas como cualquier otro ejercicio.
 
 A continuación se resumen las principales secciones para la especificación del ejercicio:
 

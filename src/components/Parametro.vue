@@ -3,6 +3,14 @@
         <div class="card mb-3">
             <div class="card-header">
                 <div class="pb-3">Parámetro
+                    <svg @click="$emit('arriba')" width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-arrow-up ml-2" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
+                        <path fill-rule="evenodd" d="M7.646 2.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8 3.707 5.354 6.354a.5.5 0 1 1-.708-.708l3-3z"/>
+                    </svg>
+                    <svg @click="$emit('abajo')" width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="#007bff" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4.646 9.646a.5.5 0 0 1 .708 0L8 12.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
+                        <path fill-rule="evenodd" d="M8 2.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V3a.5.5 0 0 1 .5-.5z"/>
+                    </svg>
                     <button @click="$emit('eliminar');" class="btn btn-outline-danger btn-sm float-right">Eliminar</button>
                 </div>
                 <ul class="nav nav-tabs card-header-tabs">
@@ -24,7 +32,7 @@
                         @keyup="errorMinimo = ''"
                         type="number" class="form-control" id="minimo-computo" v-model.number="value.minimo">
                         <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon1">&lt;</span>
+                            <span class="input-group-text" id="basic-addon1">&le;</span>
                         </div>
                         </div>
                         <div :style="{display: 'block'}" class="invalid-feedback">
@@ -50,7 +58,7 @@
                         <label for="maximo-computo">Máximo</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon1">&lt;</span>
+                                <span class="input-group-text" id="basic-addon1">&le;</span>
                             </div>
                             <input 
                                 :class="{'is-invalid': errorMaximo != ''}" 
@@ -68,7 +76,7 @@
                     <div class="form-group col-12 col-lg-3">
                         <label for="decimales">Decimales</label>
                         <select id="decimales" class="form-control" v-model.number="value.decimales">
-                            <option value="0">Sin decimales</option>
+                            <option value="0">0 decimales</option>
                             <option value="1">1 decimal</option>
                             <option value="2">2 decimales</option>
                             <option value="3">3 decimales</option>
@@ -121,7 +129,7 @@
 
 <script>
 var NOMBRES_RESERVADOS = ['break', 'case', 'catch', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'finally', 'for', 'function', 'if', 'in', 'instanceof', 'new', 'return', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void', 'while', 'with', 'class', 'const', 'enum', 'export', 'extends', 'import', 'super', 'implements', 'interface', 'let', 'package', 'private', 'protected', 'public', 'static', 'yield', 'null', 'true', 'false']
-
+var NOMBRE_VAR_LARGO_MAX = 24
 export default {
     props: ['value'],
     data() {
@@ -133,6 +141,12 @@ export default {
         }
     },
     methods: {
+        reset() {
+            this.errorMinimo =  ''
+            this.errorNombre =  ''
+            this.errorMaximo =  ''
+            this.errorTamanio = false
+        },
         esValido() {
             var todoOk = true
             if (this.value.minimo == '') {
@@ -143,14 +157,19 @@ export default {
                 this.errorNombre = 'Se debe asignar un nombre al parametro.'
                 todoOk = false
             } else {
-                if (!this.value.nombre.match(/^[a-zA-Z][_a-zA-Z0-9]*$/)) {
+                if (this.value.nombre.length > NOMBRE_VAR_LARGO_MAX) {
                     todoOk = false
-                    this.errorNombre = 'Los nombres solo pueden estar formado por caracteres alfanumericos y barra baja (\'_\') y empezar con una letra.'
+                    this.errorNombre = `El nombre del parámetro no puede tener más de ${NOMBRE_VAR_LARGO_MAX} carácteres. Notar que el nombre de cómputo no tiene esta restricción.`
                 } else {
-                    if (NOMBRES_RESERVADOS.includes(this.value.nombre)) {
+                    if (!this.value.nombre.match(/^[a-zA-Z][a-zA-Z0-9]*$/)) {
                         todoOk = false
-                        this.errorNombre = 'El nombre elegido forma parte de los nombres reservados de Moodle. Elige otro!.'
-                    }   
+                        this.errorNombre = 'Los nombres solo pueden estar formado por caracteres alfanumericos y empezar con una letra.'
+                    } else {
+                        if (NOMBRES_RESERVADOS.includes(this.value.nombre)) {
+                            todoOk = false
+                            this.errorNombre = 'El nombre elegido forma parte de los nombres reservados de Moodle. Elige otro!.'
+                        }   
+                    }
                 }
             }
             if (this.value.maximo == '') {

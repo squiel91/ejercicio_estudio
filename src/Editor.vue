@@ -651,22 +651,6 @@ export default {
                 }
             }
 
-            // DESPROLIJO: le asigno un valor acorde de decimales al parametro por conjunto
-            if (cantidadErrores == 0) {
-                this.parametros.forEach((parametro) => {
-                    if (!parametro.esIntervalo) {
-                        var maxDecimales = 0
-                        parametro.conjunto.forEach((elemento) => {
-                            let stringified = String(elemento)
-                            if (stringified.includes('.')) {
-                                maxDecimales = Math.max(maxDecimales, stringified.split('.')[1].length)
-                            }
-                        })
-                        parametro.decimales = Math.min(4, maxDecimales)
-                    }
-                })
-            }
-
             this.sinErrores = cantidadErrores == 0
             return cantidadErrores
         },
@@ -812,20 +796,10 @@ export default {
             var decimalesMaximo = 0
             var nombreVariablesUsadas = parsearVariables([texto])
             nombreVariablesUsadas.forEach((nombreVariable) => {
-                let encontrado = false
-                for (let indice in this.parametros) {
-                    if (this.parametros[indice].nombre == nombreVariable) {
-                        decimalesMaximo = Math.max(this.parametros[indice].decimales, decimalesMaximo) 
+                for (let indice in this.computos) {
+                    if (this.computos[indice].nombre == nombreVariable) {
+                        decimalesMaximo = Math.max(this.computos[indice].decimales, decimalesMaximo) 
                         break
-                    }
-
-                }
-                if (!encontrado) {
-                    for (let indice in this.computos) {
-                        if (this.computos[indice].nombre == nombreVariable) {
-                            decimalesMaximo = Math.max(this.computos[indice].decimales, decimalesMaximo) 
-                            break
-                        }
                     }
                 }
             })

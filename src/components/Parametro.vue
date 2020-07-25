@@ -163,7 +163,7 @@ export default {
                 } else {
                     if (!this.value.nombre.match(/^[a-zA-Z][a-zA-Z0-9]*$/)) {
                         todoOk = false
-                        this.errorNombre = 'Los nombres solo pueden estar formado por caracteres alfanumericos y empezar con una letra.'
+                        this.errorNombre = 'Los nombres solo pueden estar formado por caracteres alfanumericos y empezar con una letra. No se admiten espacios.'
                     } else {
                         if (NOMBRES_RESERVADOS.includes(this.value.nombre)) {
                             todoOk = false
